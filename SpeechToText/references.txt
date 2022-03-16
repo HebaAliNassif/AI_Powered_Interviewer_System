@@ -1,0 +1,7 @@
+explanation: https://www.analyticsvidhya.com/blog/2019/07/learn-build-first-speech-to-text-model-python/
+model building code: https://github.com/aya1sameh/Speech-Recognition
+
+IBM api: https://www.youtube.com/watch?v=A9_0OgW1LZU
+
+any api: https://www.thepythoncode.com/article/using-speech-recognition-to-convert-speech-to-text-python
+
