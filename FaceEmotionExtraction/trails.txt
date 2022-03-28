@@ -1,0 +1,29 @@
+1-simple dataset: 
+accuracy: 18% 
+model: sample_model.sav 
+time: several minutes
+classifier:oneVsRest+svc
+
+2-AffectNet 700 image per class:
+accuracy: 29% 
+model: AffectNet_700_model.sav
+time: 45 mins
+classifier:oneVsRest+svc
+
+3-AffectNet 700 image per class:
+accuracy: 35% 
+model: AffectNet_700_svcOnly_rpf_model.sav
+time: 15 mins
+classifier: svc
+
+4-AffectNet 5000 image per class: 
+accuracy 42.725% 
+model: AffectNet_5000_svcOnly_rpf_model.sav
+took 8 hrs
+classifier:svc
+
+5-AffectNet 5000 image per class: --stopped
+accuracy __ 
+model: EmotionDetection_AffectNet_model.sav
+took __ mins
+classifier:oneVsRest+svc
