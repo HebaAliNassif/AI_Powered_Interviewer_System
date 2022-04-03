@@ -27,3 +27,23 @@ accuracy __
 model: EmotionDetection_AffectNet_model.sav
 took __ mins
 classifier:oneVsRest+svc
+
+6-AffectNet 700 image per class but with manual hog implementation:
+accuracy 30.049999999999997% 
+model: AffectNet_700_svcOnly_rpf_manualFeatExt_model.sav
+took: 12 mins
+classifier:svc
+
+7-AffectNet 5000 image per class but with manual hog implementation:
+accuracy % 
+model: AffectNet_5000_svcOnly_rpf_manualFeatExt_model.sav
+took:  mins start:5:22
+classifier:svc
+
+
+
+
+
+
+
+
