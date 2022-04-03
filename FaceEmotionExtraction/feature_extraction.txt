@@ -1,0 +1,95 @@
+Reference:
+https://www.analyticsvidhya.com/blog/2019/09/feature-engineering-images-introduction-hog-feature-descriptor/#:~:text=The%20HOG%20feature%20descriptor%20counts,called%20hog%20in%20the%20skimage.
+https://learnopencv.com/histogram-of-oriented-gradients/
+
+Step 1: Preprocess the Data (64 x 128)
+We need to preprocess the image and bring down the width to height ratio to 1:2. The image size should preferably 
+be 64 x 128. This is because we will be dividing the image into 8*8 and 16*16 patches to extract the features. 
+Having the specified size (64 x 128) will make all our calculations pretty simple. In fact, this is the exact 
+value used in the original paper.
+-----------------------------------
+Step 2: Calculating Gradients (direction x and y)
+Now, to determine the gradient (or change) in the x-direction, we need to subtract the value on the left from 
+the pixel value on the right. Similarly, to calculate the gradient in the y-direction, we will subtract the 
+pixel value below from the pixel value above the selected pixel.
+------------------------------------
+Step 3: Calculate the Magnitude and Orientation
+we will be using the Pythagoras theorem to calculate the total gradient magnitude:
+
+Total Gradient Magnitude =  √[(Gx)2+(Gy)2]
+calculate the orientation (or direction) for the same pixel.
+Hence, the value of the angle would be:
+
+Φ = atan(Gy / Gx)
+------------------------------------
+So now, for every pixel value, we have the total gradient (magnitude) and the orientation (direction). 
+We need to generate the histogram using these gradients and orientations.
+
+Different Methods to Create Histograms using Gradients and Orientation:
+Method 1:
+We will take each pixel value, find the orientation of the pixel and update the frequency table.
+we end up with a frequency table that denotes angles and the occurrence of these angles in the image.
+Note that here the bin value of the histogram is 1. Hence we get about 180 different buckets, each 
+representing an orientation value.
+
+Method 2:
+This method is similar to the previous method, except that here we have a bin size of 20. So, the number
+ of buckets we would get here is 9.
+Again, for each pixel, we will check the orientation, and store the frequency of the orientation values in 
+the form of a 9 x 1 matrix. 
+
+Method 3:
+ instead of using the frequency, we can use the gradient magnitude to fill the values in the matrix
+
+Method 4:
+to the above method. Here, we will add the contribution of a pixel’s gradient to the bins on either side 
+of the pixel gradient. Remember, the higher contribution should be to the bin value which is closer to the 
+orientation.
+----------------------------------------
+Step 4: Calculate Histogram of Gradients in 8×8 cells (9×1)
+The histograms created in the HOG feature descriptor are not generated for the whole image. Instead, 
+the image is divided into 8×8 cells, and the histogram of oriented gradients is computed for each cell. 
+----------------------------------------
+Step 5: Normalize gradients in 16×16 cell (36×1)
+Although we already have the HOG features created for the 8×8 cells of the image, the gradients of the 
+image are sensitive to the overall lighting. This means that for a particular picture, some portion of 
+the image would be very bright as compared to the other portions.
+we can reduce this lighting variation by normalizing the gradients by taking 16×16 blocks
+Here, we will be combining four 8×8 cells to create a 16×16 block. And we already know that each 8×8 cell 
+has a 9×1 matrix for a histogram. So, we would have four 9×1 matrices or a single 36×1 matrix. To normalize 
+this matrix, we will divide each of these values by the square root of the sum of squares of the values.
+Mathematically, for a given vector V:
+
+V = [a1, a2, a3, ….a36]
+
+We calculate the root of the sum of squares:
+
+k = √(a1)2+ (a2)2+ (a3)2+ …. (a36)2
+
+And divide all the values in the vector V with this value k:
+
+NV = [a1/k, a2/k, a3/k, ….a36/k]
+The resultant would be a normalized vector of size 36×1.
+----------------------------------------
+Step 6: Features for the complete image:
+we will combine all these to get the features for the final image.We would have 105 (7×15) blocks of 16×16. 
+Each of these 105 blocks has a vector of 36×1 as features. Hence, the total features for the image would be 
+105 x 36×1 = 3780 features.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
