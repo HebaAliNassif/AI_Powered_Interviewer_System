@@ -22,7 +22,7 @@ model: AffectNet_5000_svcOnly_rpf_model.sav
 took 8 hrs
 classifier:svc
 
-5-AffectNet 5000 image per class: --stopped
+5-AffectNet 5000 image per class: --stopped too much time more than 24 hrs
 accuracy __ 
 model: EmotionDetection_AffectNet_model.sav
 took __ mins
@@ -35,9 +35,9 @@ took: 12 mins
 classifier:svc
 
 7-AffectNet 5000 image per class but with manual hog implementation:
-accuracy % 
+accuracy 35.55% 
 model: AffectNet_5000_svcOnly_rpf_manualFeatExt_model.sav
-took:  mins start:5:22
+took:  ~8hrs start:5:22pm finish:1:24 am
 classifier:svc
 
 
