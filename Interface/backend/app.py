@@ -2,6 +2,7 @@ from flask import Flask, jsonify
 from flask_cors import CORS
 import os
 import subprocess
+from flask import request
 
 # configuration
 DEBUG = True
@@ -21,9 +22,18 @@ def ping_pong():
     #live - emotion extraction
     os.system('python live_ManualHOG.py')
     #input image - emotion extraction 
-    res=subprocess.check_output('python trail2_test.py')
-    res.decode("utf-8")
-    return jsonify(str(int(res)))
+    #res=subprocess.check_output('python trail2_test.py')
+    #res.decode("utf-8")
+    return jsonify('hi')
+
+@app.route('/video_processing', methods=['POST'])
+def video_processing():
+    data=request.get_data()
+    print(data)
+    #input image - emotion extraction 
+    #res=subprocess.check_output('python trail2_test.py')
+    #res.decode("utf-8")
+    return jsonify('hi')
 
 
 if __name__ == '__main__':

@@ -4,6 +4,7 @@ import VueRouter from 'vue-router'
 Vue.use(VueRouter)
 import UploadResume from '../views/ResumeUpload.vue'
 import Interview from '../views/Interview.vue'
+
 const routes = [
   {
     path: '/upload_resume',
@@ -15,6 +16,7 @@ const routes = [
     name: 'interview',
     component: Interview
   },
+  
   
 ]
 
