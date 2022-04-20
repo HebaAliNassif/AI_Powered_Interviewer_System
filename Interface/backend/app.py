@@ -8,12 +8,14 @@ import subprocess
 from werkzeug.utils import secure_filename
 # configuration
 DEBUG = True
-UPLOAD_FOLDER = ''
+UPLOAD_VIDEOS_FOLDER = 'videos'
+UPLOAD_CVS_FOLDER = 'CVs'
 # instantiate the app
 app = Flask(__name__)
 app.config.from_object(__name__)
 app.config['CORS_HEADERS'] = 'Content-Type'
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['UPLOAD_VIDEOS_FOLDER'] = UPLOAD_VIDEOS_FOLDER
+app.config['UPLOAD_CVS_FOLDER'] = UPLOAD_CVS_FOLDER
 # enable CORS
 CORS(app, resources={r'/video_processing': {'origins': 'http://localhost:8080'}})
 
@@ -41,8 +43,23 @@ def video_processing():
     #base_file, ext = os.path.splitext(filename)
     new_file = username + '.' + 'mp4'
 
-    file.save(os.path.join(app.config['UPLOAD_FOLDER'], new_file))
+    file.save(os.path.join(app.config['UPLOAD_VIDEOS_FOLDER'], new_file))
     return jsonify('video received')
+
+@app.route('/add_resume', methods=['POST'])
+@cross_origin(origin='http://localhost:8080',headers=['Content-Type'])
+def add_resume():
+    #response = jsonify({'some': 'data'})
+    #response.headers.add('Access-Control-Allow-Origin', '*')
+    #video = request.files['webcam'].stream.read()
+    file = request.files['cv']
+    username=request.form['username']
+    filename = secure_filename(file.filename)
+    #base_file, ext = os.path.splitext(filename)
+    new_file = username + '.' + 'pdf'
+
+    file.save(os.path.join(app.config['UPLOAD_CVS_FOLDER'], new_file))
+    return jsonify('file received')
 
 
 if __name__ == '__main__':
