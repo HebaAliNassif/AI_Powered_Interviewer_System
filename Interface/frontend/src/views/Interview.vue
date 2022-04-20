@@ -9,7 +9,13 @@
     <p>
       we are going to ask you some questions, each question you will hear it by
       our machine and will appear infront of you and you will be given 1 min to
-      answer on each question with camera opened. Are you ready?
+      answer on each question with camera opened. Note that once you press the
+      start button, the first question will appear and the black screen will be
+      activated and you should press on the middle of it once it is activated
+      then press the record button once you are ready. Note that it will
+      automatically send your recording after 1 min or when you press the stop
+      recording button then you should press next for the next question to
+      appear and so on. Are you ready?
     </p>
     <br />
     <div class="text-center">
@@ -21,17 +27,25 @@
         @click="EmotionExtraction()"
         >{{ bottun[0] }}</v-btn
       >
-      <v-btn v-show="this.nextTime" depressed color="blue" x-large>{{
-        bottun[1]
-      }}</v-btn>
+      <v-btn
+        v-show="this.nextTime"
+        depressed
+        color="blue"
+        x-large
+        @click="EmotionExtraction()"
+        >{{ bottun[1] }}</v-btn
+      >
     </div>
     <br />
     <div class="text-center">
-      <p style="margin: 0rem 0rem 0rem 4rem" v-if="this.question1">Question 1: {{ questions }}</p>
+      <p v-if="this.showQuestion">
+        Question {{ this.$store.state.questionNumber }}:
+        {{ questions[this.$store.state.questionNumber - 1] }}
+      </p>
     </div>
 
-    <div >
-      <video style="margin: 0rem 0rem 0rem 33rem" id="myVideo" playsinline class="video-js vjs-default-skin"></video>
+    <div>
+      <video id="myVideo" playsinline class="video-js vjs-default-skin"></video>
     </div>
   </v-app>
 </template>
@@ -54,16 +68,20 @@ export default {
   components: {},
   data() {
     return {
-      video: "",
       firstTime: true,
       nextTime: false,
       bottun: ["Start", "Next"],
-      question1: false,
-      questions: "Please tell us about yourself in 1 min",
+      showQuestion: false,
+      questions: [
+        "Please tell us about yourself in 1 min",
+        "Why did you decide to apply to this role?",
+        "What do you know about our company",
+      ],
     };
   },
   methods: {
     startcamera() {
+      let QN = this.$store.state.questionNumber.toString();
       let options = {
         // video.js options
         controls: true,
@@ -95,40 +113,77 @@ export default {
 
         console.log("videojs-record is ready!");
       });
-
+      let recorded_videos = new Set();
       player.on("finishRecord", function () {
-        this.video = player.recordedData;
-        const path = "http://localhost:5000/video_processing";
-        axios
-          .post(path, { video: this.video })
-          .then((res) => {
-            console.log(res.data);
-            
-          })
-          .catch((error) => {
-            console.error(error);
+        if (player.recordedData.length > 0) {
+          recorded_videos.add(
+            player.recordedData[player.recordedData.length - 1]
+          );
+        } else {
+          recorded_videos.add(player.recordedData);
+        }
+        if (recorded_videos.size == 3) {
+          let index = 0;
+          recorded_videos.forEach((video) => {
+            index = index + 1;
+            let formData = new FormData();
+            console.log("sending video " + index);
+            console.log(video);
+            formData.append("webcam", video);
+            formData.append("username", "aya_Q_" + index );
+            const path = "http://localhost:5000/video_processing";
+            axios
+              .post(path, formData, {
+                headers: {
+                  "Content-Type": "multipart/form-data",
+                },
+              })
+              .then((res) => {
+                console.log(res.data);
+              })
+              .catch((error) => {
+                console.error(error);
+              });
           });
-        player.record().destroy();
-        
+        }
+
+        player.record().reset();
       });
-      
     },
     EmotionExtraction() {
-      this.question1 = true;
+      if (this.$store.state.questionNumber > 2) {
+        this.$router.push("/result");
+        return;
+      }
+      this.showQuestion = true;
       this.firstTime = false;
-      //this.nextTime=true;
+      this.nextTime = true;
       let speech = new SpeechSynthesisUtterance();
       speech.lang = "en-US";
-      speech.text = this.questions;
+      speech.text = this.questions[this.$store.state.questionNumber];
+      this.$store.state.questionNumber = this.$store.state.questionNumber + 1;
       speech.volume = 1;
       speech.rate = 1;
       speech.pitch = 1;
       //var voices = speechSynthesis.getVoices();
       //speech.voice = voices[5];
-      //window.speechSynthesis.speak(speech);
+      window.speechSynthesis.speak(speech);
       this.startcamera();
     },
   },
   created() {},
 };
 </script>
+<style scoped>
+video {
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+}
+.video-js[tabindex="-1"] {
+  outline: 0;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+}
+</style>
