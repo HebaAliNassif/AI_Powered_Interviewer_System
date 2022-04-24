@@ -62,6 +62,7 @@ import MicrophonePlugin from "wavesurfer.js/dist/plugin/wavesurfer.microphone.js
 WaveSurfer.microphone = MicrophonePlugin;
 
 // register videojs-wavesurfer plugin
+import TsEBMLEngine from 'videojs-record/dist/plugins/videojs.record.ts-ebml.js';
 import "videojs-wavesurfer/dist/css/videojs.wavesurfer.css";
 import Wavesurfer from "videojs-wavesurfer/dist/videojs.wavesurfer.js";
 export default {
@@ -81,13 +82,14 @@ export default {
   },
   methods: {
     startcamera() {
-      let QN = this.$store.state.questionNumber.toString();
+      
       let options = {
         // video.js options
         controls: true,
+        
         bigPlayButton: false,
         loop: false,
-        fluid: false,
+        fluid: true,
         width: 400,
         height: 400,
         plugins: {
@@ -99,6 +101,7 @@ export default {
             maxLength: 60,
             displayMilliseconds: true,
             debug: false,
+            convertEngine: 'ts-ebml',
           },
         },
       };
@@ -114,13 +117,14 @@ export default {
         console.log("videojs-record is ready!");
       });
       let recorded_videos = new Set();
-      player.on("finishRecord", function () {
-        if (player.recordedData.length > 0) {
+      
+      player.on("finishConvert", function () {
+        if (player.convertedData.length > 0) {
           recorded_videos.add(
-            player.recordedData[player.recordedData.length - 1]
+            player.convertedData[player.convertedData.length - 1]
           );
         } else {
-          recorded_videos.add(player.recordedData);
+          recorded_videos.add(player.convertedData);
         }
         if (recorded_videos.size == 3) {
           let index = 0;
