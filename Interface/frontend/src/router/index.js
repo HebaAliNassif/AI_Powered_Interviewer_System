@@ -4,6 +4,7 @@ import VueRouter from 'vue-router'
 Vue.use(VueRouter)
 import UploadResume from '../views/ResumeUpload.vue'
 import Interview from '../views/Interview.vue'
+import Results from '../views/Results.vue'
 
 const routes = [
   {
@@ -15,6 +16,11 @@ const routes = [
     path: '/interview',
     name: 'interview',
     component: Interview
+  },
+  {
+    path: '/result',
+    name: 'result',
+    component: Results
   },
   
   
