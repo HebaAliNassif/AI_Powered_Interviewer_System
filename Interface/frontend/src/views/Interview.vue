@@ -24,15 +24,16 @@
         depressed
         color="blue"
         x-large
-        @click="EmotionExtraction()"
+        @click="VideoProcessing()"
         >{{ bottun[0] }}</v-btn
       >
       <v-btn
         v-show="this.nextTime"
+        
         depressed
         color="blue"
         x-large
-        @click="EmotionExtraction()"
+        @click="VideoProcessing()"
         >{{ bottun[1] }}</v-btn
       >
     </div>
@@ -73,6 +74,7 @@ export default {
       nextTime: false,
       bottun: ["Start", "Next"],
       showQuestion: false,
+     
       questions: [
         "Please tell us about yourself in 1 min",
         "Why did you decide to apply to this role?",
@@ -106,7 +108,6 @@ export default {
         },
       };
       let player = videojs("myVideo", options, function () {
-        // print version information at startup
         const msg =
           "Using video.js " +
           videojs.VERSION +
@@ -118,7 +119,7 @@ export default {
       });
       let recorded_videos = new Set();
       
-      player.on("finishConvert", function () {
+      player.on("finishConvert", ()=> {
         if (player.convertedData.length > 0) {
           recorded_videos.add(
             player.convertedData[player.convertedData.length - 1]
@@ -128,13 +129,16 @@ export default {
         }
         if (recorded_videos.size == 3) {
           let index = 0;
-          recorded_videos.forEach((video) => {
+          
+          recorded_videos.forEach(async (video) => {
             index = index + 1;
+            
+            
             let formData = new FormData();
             console.log("sending video " + index);
-            console.log(video);
+            //console.log(video);
             formData.append("webcam", video);
-            formData.append("username", "aya_Q_" + index );
+            formData.append("username", "user_Q_" + index );
             const path = "http://localhost:5000/video_processing";
             axios
               .post(path, formData, {
@@ -142,8 +146,9 @@ export default {
                   "Content-Type": "multipart/form-data",
                 },
               })
-              .then((res) => {
-                console.log(res.data);
+              .then( res => {
+                
+                localStorage.setItem('EmotionExtractionResults_'+res.data[0],JSON.stringify(res.data[1]));
               })
               .catch((error) => {
                 console.error(error);
@@ -154,7 +159,7 @@ export default {
         player.record().reset();
       });
     },
-    EmotionExtraction() {
+    VideoProcessing() {
       if (this.$store.state.questionNumber > 2) {
         this.$router.push("/result");
         return;
@@ -169,13 +174,24 @@ export default {
       speech.volume = 1;
       speech.rate = 1;
       speech.pitch = 1;
+      //To change the voice uncomment the code below:
       //var voices = speechSynthesis.getVoices();
       //speech.voice = voices[5];
       window.speechSynthesis.speak(speech);
       this.startcamera();
     },
   },
-  created() {},
+  created() {
+    //temp for testing
+    //localStorage.clear()
+    // uncomment when we finish testing to force the user to the results page if the user already finished the interview phase
+    /*let Question1_data=JSON.parse(localStorage.getItem("EmotionExtractionResults_user_Q_1"))
+      let Question2_data=JSON.parse(localStorage.getItem("EmotionExtractionResults_user_Q_2"))
+      let Question3_data=JSON.parse(localStorage.getItem("EmotionExtractionResults_user_Q_3"))
+    if(Question1_data!=null && Question2_data!=null && Question3_data!=null){
+      this.$router.push("/result");
+    }*/
+  },
 };
 </script>
 <style scoped>

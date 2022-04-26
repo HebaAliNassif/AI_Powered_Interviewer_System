@@ -1,8 +1,8 @@
 import cv2
-import config
+#import config
 import os
 def openCV_detectface(image):
-    cascPath = "haarcascade_frontalface_default.xml"
+    cascPath = "C:\\Users\\THINK\\Documents\\GitHub\\AI_Powered_Interviewer_System\\Video\\haarcascade_frontalface_default.xml"
 
     faceCascade = cv2.CascadeClassifier(cascPath)
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -40,9 +40,9 @@ def analyse_emotions(video_path, opencv_fd=True, frames_path=None, faces_path=No
         
         sucess, frame = video.read()
         
-if __name__ == '__main__':
+#if __name__ == '__main__':
     # To visualize farmes and detected faces, use
     #analyse_emotions(config.VIDEO_PATH+"/"+config.VIDEO_NAME, config.OPENCV_FACE_DETECTION, config.FRAMES_DIRECTORY, config.FACES_DIRECTORY)
     
     # else, use
-    analyse_emotions(config.VIDEO_PATH+"/"+config.VIDEO_NAME, config.OPENCV_FACE_DETECTION)
+    #analyse_emotions(config.VIDEO_PATH+"/"+config.VIDEO_NAME, config.OPENCV_FACE_DETECTION)
