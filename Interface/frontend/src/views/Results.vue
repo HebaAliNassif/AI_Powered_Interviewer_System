@@ -18,7 +18,7 @@
     </div>
     <div >
     <h2>Personality Assessment Percentages</h2>
-    <apexchart type="radialBar" width="380" :options="chartOptions" :series="series"></apexchart>
+    <apexchart type="bar" width="380" :options="this.chartOptions2" :series="this.series2"></apexchart>
     </div>
     </div>
     <div align="center" style="font-family: auto;">
@@ -58,7 +58,44 @@ export default {
                 }
               }
             }]
+            },
+            series2: [{
+            data: [29, 55, 15, 70, 90]
+          }], 
+        chartOptions2: {
+            chart: {
+              height: 350,
+              type: 'bar',
+              
+            },
+            plotOptions: {
+              bar: {
+                columnWidth: '45%',
+                distributed: true,
+              }
+            },
+            dataLabels: {
+              enabled: false
+            },
+            legend: {
+              show: false
+            },
+            xaxis: {
+              categories: [
+                ['Openness'],
+                ['Conscientiousness'],
+                ['Extroversion'],
+                ['Agreeableness'],
+                ['Neuroticism'],
+                
+              ],
+              labels: {
+                style: {
+                  fontSize: '12px'
+                }
+              }
             }
+          },    
       
   };
   },
