@@ -125,7 +125,7 @@ class FaceDetector:
         
         while True:
             if self.result_queue.empty():
-                print(' %d/%d' % (done_items, total_items), end='\r')
+                #print(' %d/%d' % (done_items, total_items), end='\r')
                 if self.image_queue.empty() and self.result_queue.empty():
                     if done_items == total_items:
                         break
