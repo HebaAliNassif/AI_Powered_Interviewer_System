@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 
+import glob
 import nltk 
 import num2words 
 import re
@@ -16,6 +17,7 @@ from sklearn.ensemble import RandomForestClassifier
 
 stop_words = ['i', 'me', 'my', 'myself', 'we', 'our', 'ours', 'ourselves', 'you', "you're", "you've", "you'll", "you'd", 'your', 'yours', 'yourself', 'yourselves', 'he', 'him', 'his', 'himself', 'she', "she's", 'her', 'hers', 'herself', 'it', "it's", 'its', 'itself', 'they', 'them', 'their', 'theirs', 'themselves', 'what', 'which', 'who', 'whom', 'this', 'that', "that'll", 'these', 'those', 'am', 'is', 'are', 'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had', 'having', 'do', 'does', 'did', 'doing', 'a', 'an', 'the', 'and', 'but', 'if', 'or', 'because', 'as', 'until', 'while', 'of', 'at', 'by', 'for', 'with', 'about', 'against', 'between', 'into', 'through', 'during', 'before', 'after', 'above', 'below', 'to', 'from', 'up', 'down', 'in', 'out', 'on', 'off', 'over', 'under', 'again', 'further', 'then', 'once', 'here', 'there', 'when', 'where', 'why', 'how', 'all', 'any', 'both', 'each', 'few', 'more', 'most', 'other', 'some', 'such', 'no', 'nor', 'not', 'only', 'own', 'same', 'so', 'than', 'too', 'very', 's', 't', 'can', 'will', 'just', 'don', "don't", 'should', "should've", 'now', 'd', 'll', 'm', 'o', 're', 've', 'y', 'ain', 'aren', "aren't", 'couldn', "couldn't", 'didn', "didn't", 'doesn', "doesn't", 'hadn', "hadn't", 'hasn', "hasn't", 'haven', "haven't", 'isn', "isn't", 'ma', 'mightn', "mightn't", 'mustn', "mustn't", 'needn', "needn't", 'shan', "shan't", 'shouldn', "shouldn't", 'wasn', "wasn't", 'weren', "weren't", 'won', "won't", 'wouldn', "wouldn't"]
 punctuations = ['!', '"', '#', '$', '%', '&', "'", '(', ')', '*', '+', ',', '-', '.', '/', ':', ';', '<', '=', '>', '?', '@', '[', '\\', ']', '^', '_', '`', '{', '|', '}', '~']
+total_vocab = np.load('vectors/total_vocab.npy')
 
 
 def loadDataset(): 
@@ -284,7 +286,20 @@ def predictModel(Answers_vectors):
 
     return cEXTAverage, cNEUAverage, cAGRAverage, cCONAverage, cOPNAverage
 
-def predictPersonality(Answers, vocab):
+def predictPersonality(path):
+    Answers = []
+    for filename in glob.glob(path + '/*.*'):
+        #.append(filename)
+        with open(filename, 'r') as content_file:
+            data = content_file.readlines()
+            Answers.append(data[0])
+
+    Answers = np.asarray(Answers)
+    #print(Answers)
+    
+    #print(Answers)
+
+       
     Answers_dataset = Answers
 
     numberOfAnswers = len(Answers)
@@ -319,10 +334,10 @@ def predictPersonality(Answers, vocab):
             Answers_tf_idf[i, Answers_token] = Answers_tf*Answers_idf
 
     # Document Vectorization
-    Answers_vectors = np.zeros((Answers_N, len(vocab)))
+    Answers_vectors = np.zeros((Answers_N, len(total_vocab)))
     for i in Answers_tf_idf:
-        if(i[1] in vocab):
-            Answers_ind = np.where(vocab == i[1]) 
+        if(i[1] in total_vocab):
+            Answers_ind = np.where(total_vocab == i[1]) 
             Answers_vectors[i[0]][Answers_ind] = Answers_tf_idf[i]
 
 
@@ -351,7 +366,6 @@ def predictPersonality(Answers, vocab):
 # Get total vocabulary
 #total_vocab = [x for x in X_train_DF]
 #np.save('vectors/total_vocab.npy', total_vocab)
-total_vocab = np.load('vectors/total_vocab.npy')
 
 # Calculate document frequency for testing data
 #X_test_DF = calculateDF(X_test_dataset)
@@ -378,6 +392,9 @@ total_vocab = np.load('vectors/total_vocab.npy')
 
 #saveModel(clf_rf_cEXT, clf_rf_cNEU, clf_rf_cAGR, clf_rf_cCON, clf_rf_cOPN) 
 
-Answers = ['I started my career in Marketing after graduating with a Business degree in 2013. I’ve spent my entire career at Microsoft, receiving two promotions and three awards for outstanding performance. I’m looking to join a smaller company now, and take on more leadership and project management.', 'From what I read, your company is one of the leaders in database and website security for large corporations. I read your list of clients on your website and saw multiple Fortune 500 companies mentioned, including Verizon and IBM. Beyond that, I recently had an informational interview with James from the Marketing team, after messaging him on LinkedIn, and he shared a bit about your company culture; mainly, the emphasis on collaboration and open interaction between different departments and groups. That’s something that sounds exciting to me and that I’m hoping to find in my next job. Can you share more about how you’d describe the company culture here?', 'I know you’re one of the leaders in contract manufacturing for the pharmaceutical industry. I read two recent news articles as well and saw that you just finalized plans to build a new facility that will double your manufacturing capacity. One of my hopes in my current job search is to find a fast-growing organization that could take full advantage of my past experience in scaling up manufacturing operations, so I was excited to have this interview and learn more about the specific work and challenges you need help with from the person you hire for this role.']
+#Answers = ['I started my career in Marketing after graduating with a Business degree in 2013. I’ve spent my entire career at Microsoft, receiving two promotions and three awards for outstanding performance. I’m looking to join a smaller company now, and take on more leadership and project management.', 'From what I read, your company is one of the leaders in database and website security for large corporations. I read your list of clients on your website and saw multiple Fortune 500 companies mentioned, including Verizon and IBM. Beyond that, I recently had an informational interview with James from the Marketing team, after messaging him on LinkedIn, and he shared a bit about your company culture; mainly, the emphasis on collaboration and open interaction between different departments and groups. That’s something that sounds exciting to me and that I’m hoping to find in my next job. Can you share more about how you’d describe the company culture here?', 'I know you’re one of the leaders in contract manufacturing for the pharmaceutical industry. I read two recent news articles as well and saw that you just finalized plans to build a new facility that will double your manufacturing capacity. One of my hopes in my current job search is to find a fast-growing organization that could take full advantage of my past experience in scaling up manufacturing operations, so I was excited to have this interview and learn more about the specific work and challenges you need help with from the person you hire for this role.']
 
-print(predictPersonality(Answers, total_vocab))
+#print(predictPersonality(Answers, total_vocab))
+
+path = "C:/Users/maram/Documents/GitHub/AI_Powered_Interviewer_System/PersonalityAssessment/SpeechRecognitionOutput"
+print(predictPersonality(path))
