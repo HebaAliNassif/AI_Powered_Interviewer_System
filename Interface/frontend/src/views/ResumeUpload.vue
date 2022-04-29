@@ -65,7 +65,7 @@ export default {
           })
           .then((res) => {
             console.log(res.data);
-            //localStorage.setItem('Resume_user',JSON.stringify(res.data[1]));
+            localStorage.setItem('Resume_user',JSON.stringify(res.data));
           })
           .catch((error) => {
             console.error(error);
@@ -76,11 +76,10 @@ export default {
     },
   },
   created() {
-    // uncomment when we finish testing to force the user to the results page if the user already finished the Resume upload phase
-    /*let Resume_data=JSON.parse(localStorage.getItem("Resume_user"))
-    if(Resume_data!=null){
+    if ( "Resume_user" in localStorage )
+    {
       this.$router.push("/result");
-    }*/
+    }
   },
 };
 </script>

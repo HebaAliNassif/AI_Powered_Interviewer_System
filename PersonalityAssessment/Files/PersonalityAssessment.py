@@ -9,7 +9,7 @@ import pickle
 import os
 import time
 import string
-
+import sys
 from sklearn.model_selection import train_test_split
 from nltk import wordpunct_tokenize, word_tokenize, WordNetLemmatizer, sent_tokenize, pos_tag
 from collections import Counter
@@ -17,7 +17,7 @@ from sklearn.ensemble import RandomForestClassifier
 
 stop_words = ['i', 'me', 'my', 'myself', 'we', 'our', 'ours', 'ourselves', 'you', "you're", "you've", "you'll", "you'd", 'your', 'yours', 'yourself', 'yourselves', 'he', 'him', 'his', 'himself', 'she', "she's", 'her', 'hers', 'herself', 'it', "it's", 'its', 'itself', 'they', 'them', 'their', 'theirs', 'themselves', 'what', 'which', 'who', 'whom', 'this', 'that', "that'll", 'these', 'those', 'am', 'is', 'are', 'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had', 'having', 'do', 'does', 'did', 'doing', 'a', 'an', 'the', 'and', 'but', 'if', 'or', 'because', 'as', 'until', 'while', 'of', 'at', 'by', 'for', 'with', 'about', 'against', 'between', 'into', 'through', 'during', 'before', 'after', 'above', 'below', 'to', 'from', 'up', 'down', 'in', 'out', 'on', 'off', 'over', 'under', 'again', 'further', 'then', 'once', 'here', 'there', 'when', 'where', 'why', 'how', 'all', 'any', 'both', 'each', 'few', 'more', 'most', 'other', 'some', 'such', 'no', 'nor', 'not', 'only', 'own', 'same', 'so', 'than', 'too', 'very', 's', 't', 'can', 'will', 'just', 'don', "don't", 'should', "should've", 'now', 'd', 'll', 'm', 'o', 're', 've', 'y', 'ain', 'aren', "aren't", 'couldn', "couldn't", 'didn', "didn't", 'doesn', "doesn't", 'hadn', "hadn't", 'hasn', "hasn't", 'haven', "haven't", 'isn', "isn't", 'ma', 'mightn', "mightn't", 'mustn', "mustn't", 'needn', "needn't", 'shan', "shan't", 'shouldn', "shouldn't", 'wasn', "wasn't", 'weren', "weren't", 'won', "won't", 'wouldn', "wouldn't"]
 punctuations = ['!', '"', '#', '$', '%', '&', "'", '(', ')', '*', '+', ',', '-', '.', '/', ':', ';', '<', '=', '>', '?', '@', '[', '\\', ']', '^', '_', '`', '{', '|', '}', '~']
-total_vocab = np.load('vectors/total_vocab.npy')
+total_vocab = np.load("../../PersonalityAssessment/Files/vectors/total_vocab.npy")
 
 
 def loadDataset(): 
@@ -227,35 +227,35 @@ def trainModel(train_x_vectors, train_y_cEXT, train_y_cNEU, train_y_cAGR, train_
     return clf_rf_cEXT, clf_rf_cNEU, clf_rf_cAGR, clf_rf_cCON, clf_rf_cOPN
 
 def saveModel(clf_rf_cEXT, clf_rf_cNEU, clf_rf_cAGR, clf_rf_cCON, clf_rf_cOPN):  
-    RF_cEXT_model = 'models/RF_cEXT_model.sav'
+    RF_cEXT_model = '../../PersonalityAssessment/Files/models/RF_cEXT_model.sav'
     pickle.dump(clf_rf_cEXT, open(RF_cEXT_model, 'wb'))
 
-    RF_cNEU_model = 'models/RF_cNEU_model.sav'
+    RF_cNEU_model = '../../PersonalityAssessment/Files/models/RF_cNEU_model.sav'
     pickle.dump(clf_rf_cNEU, open(RF_cNEU_model, 'wb'))
 
-    RF_cAGR_model = 'models/RF_cAGR_model.sav'
+    RF_cAGR_model = '../../PersonalityAssessment/Files/models/RF_cAGR_model.sav'
     pickle.dump(clf_rf_cAGR, open(RF_cAGR_model, 'wb'))
 
-    RF_cCON_model = 'models/RF_cEXT_model.sav'
+    RF_cCON_model = '../../PersonalityAssessment/Files/models/RF_cEXT_model.sav'
     pickle.dump(clf_rf_cCON, open(RF_cCON_model, 'wb'))
 
-    RF_cOPN_model = 'models/RF_cOPN_model.sav'
+    RF_cOPN_model = '../../PersonalityAssessment/Files/models/RF_cOPN_model.sav'
     pickle.dump(clf_rf_cOPN, open(RF_cOPN_model, 'wb'))
 
 def loadModel():
-    RF_cEXT_model = 'models/RF_cEXT_model.sav'
+    RF_cEXT_model = '../../PersonalityAssessment/Files/models/RF_cEXT_model.sav'
     clf_rf_cEXT = pickle.load(open(RF_cEXT_model, 'rb'))
 
-    RF_cNEU_model = 'models/RF_cNEU_model.sav'
+    RF_cNEU_model = '../../PersonalityAssessment/Files/models/RF_cNEU_model.sav'
     clf_rf_cNEU = pickle.load(open(RF_cNEU_model, 'rb'))
     
-    RF_cAGR_model = 'models/RF_cAGR_model.sav'
+    RF_cAGR_model = '../../PersonalityAssessment/Files/models/RF_cAGR_model.sav'
     clf_rf_cAGR = pickle.load(open(RF_cAGR_model, 'rb'))
 
-    RF_cCON_model = 'models/RF_cEXT_model.sav'
+    RF_cCON_model = '../../PersonalityAssessment/Files/models/RF_cEXT_model.sav'
     clf_rf_cCON = pickle.load(open(RF_cCON_model, 'rb'))
 
-    RF_cOPN_model = 'models/RF_cOPN_model.sav'
+    RF_cOPN_model = '../../PersonalityAssessment/Files/models/RF_cOPN_model.sav'
     clf_rf_cOPN = pickle.load(open(RF_cOPN_model, 'rb'))
 
     return clf_rf_cEXT, clf_rf_cNEU, clf_rf_cAGR, clf_rf_cCON, clf_rf_cOPN
@@ -295,11 +295,7 @@ def predictPersonality(path):
             Answers.append(data[0])
 
     Answers = np.asarray(Answers)
-    #print(Answers)
-    
-    #print(Answers)
-
-       
+      
     Answers_dataset = Answers
 
     numberOfAnswers = len(Answers)
@@ -396,5 +392,5 @@ def predictPersonality(path):
 
 #print(predictPersonality(Answers, total_vocab))
 
-path = "C:/Users/maram/Documents/GitHub/AI_Powered_Interviewer_System/PersonalityAssessment/SpeechRecognitionOutput"
-print(predictPersonality(path))
+#path = "C:/Users/maram/Documents/GitHub/AI_Powered_Interviewer_System/PersonalityAssessment/SpeechRecognitionOutput"
+#print(predictPersonality(path))

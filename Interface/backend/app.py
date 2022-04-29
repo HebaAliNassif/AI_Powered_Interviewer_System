@@ -12,9 +12,11 @@ import sys
 #sys.path.insert(1, "../../Video/emotions_analysis")
 #import emotions_analysis
 sys.path.insert(0, '../../')
-
+###############OUR MODULES IMPORTS#################
 from Video.emotions_analysis import analyse_emotions
 from FaceEmotionExtraction.FaceEmotionExtraction_ManualImplementedHOG_IntegrationTest import accumaltive_emotion_extraction_probabilities
+from PersonalityAssessment.Files.PersonalityAssessment import predictPersonality
+
 # configuration
 DEBUG = True
 UPLOAD_VIDEOS_FOLDER = 'Videos'
@@ -55,17 +57,16 @@ def ping_pong():
 @cross_origin(origin='http://localhost:8080',headers=['Content-Type'])
 def video_processing():
     #recieving the videos and saving it locally 
-    #file = request.files['webcam']
+    file = request.files['webcam']
     username=request.form['username']
-    #filename = secure_filename(file.filename)
+    filename = secure_filename(file.filename)
     new_file = username + '.' + 'mp4'
-    #file_path=f"{app.config['UPLOAD_VIDEOS_FOLDER']}/{new_file}"
-    #file.save(file_path)
+    file_path=f"{app.config['UPLOAD_VIDEOS_FOLDER']}/{new_file}"
+    file.save(file_path)
     
-    '''
+    
     #passing videos to speech to text module:
     #converting .mp4 to .wav
-    print(file_path)
     SpeechToText.convert_video_to_audio_moviepy(file_path)
     new_audio_file = username + '.' + 'wav'
     #extracting the speech and writting in external files
@@ -73,15 +74,24 @@ def video_processing():
     f= open(f"{app.config['UPLOAD_SPEECHTEXT_FOLDER']}/{username}.txt","w+")
     f.write(text)
     f.close()
-    '''
+    
     faces_detected_path=f"{app.config['FACES_DETECTED_FOLDER']}/{username}"
     #passing videos to face detection module:
-    #analyse_emotions(file_path, opencv_fd=True, frames_path=f"{app.config['FRAMES_FOLDER']}/{username}", faces_path=faces_detected_path)
+    analyse_emotions(file_path, opencv_fd=True, frames_path=f"{app.config['FRAMES_FOLDER']}/{username}", faces_path=faces_detected_path)
     #passing list of cropped images from face detection module to face emotion extraction module:
     Acc_emotion_extraction_probs=accumaltive_emotion_extraction_probabilities(faces_detected_path)
     #return dictionary of classes probabilities
     return jsonify([username,Acc_emotion_extraction_probs])
+    #return jsonify('ji')
 
+@app.route('/personality_assessment', methods=['GET'])
+@cross_origin(origin='http://localhost:8080')
+def personality_assessment():
+    file_path=f"{app.config['UPLOAD_SPEECHTEXT_FOLDER']}"
+    
+    predictPersonalityResults=predictPersonality(file_path)
+    return jsonify(predictPersonalityResults)
+    
 @app.route('/add_resume', methods=['POST'])
 @cross_origin(origin='http://localhost:8080',headers=['Content-Type'])
 def add_resume():

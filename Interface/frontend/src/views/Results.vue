@@ -6,7 +6,7 @@
   border="top"
   elevation="9"
   type="info"
->Please wait untill all the results are prepared</v-alert>
+>Please wait untill all the results are prepared..try to refresh the page after some time</v-alert>
     <div style="display: flex;
     flex-direction: row;
     font-family: auto;
@@ -40,7 +40,7 @@ export default {
   data() {
     return {
       waitForResults:true,
-        series: [],
+        series: [0,0,0,0,0,0,0,0],
 
         chartOptions: {
             chart: {
@@ -60,7 +60,7 @@ export default {
             }]
             },
             series2: [{
-            data: [29, 55, 15, 70, 90]
+            data: [0,0,0,0,0]
           }], 
         chartOptions2: {
             chart: {
@@ -72,6 +72,7 @@ export default {
               bar: {
                 columnWidth: '45%',
                 distributed: true,
+                horizontal: true,
               }
             },
             dataLabels: {
@@ -81,6 +82,9 @@ export default {
               show: false
             },
             xaxis: {
+              max: 100,
+              
+              
               categories: [
                 ['Openness'],
                 ['Conscientiousness'],
@@ -88,13 +92,15 @@ export default {
                 ['Agreeableness'],
                 ['Neuroticism'],
                 
+                
               ],
               labels: {
                 style: {
                   fontSize: '12px'
                 }
               }
-            }
+            },
+            
           },    
       
   };
@@ -104,14 +110,36 @@ export default {
       
   },
   created() {
-    
-      let Question1_data=JSON.parse(localStorage.getItem("EmotionExtractionResults_user_Q_1"))
-      let Question2_data=JSON.parse(localStorage.getItem("EmotionExtractionResults_user_Q_2"))
-      let Question3_data=JSON.parse(localStorage.getItem("EmotionExtractionResults_user_Q_3"))
-      
-      if (Question1_data!=null && Question2_data!=null && Question3_data!=null){
+      var PersonalityAssessmentResults;
+
+      var Question1_data;
+      var Question2_data;
+      var Question3_data;
+      if("Resume_user" in localStorage ){
+          //fill the statistics in charts
+        }
+        
+      if("PersonalityAssessmentResults" in localStorage){
+          PersonalityAssessmentResults=JSON.parse(localStorage.getItem("PersonalityAssessmentResults"));
+          console.log(PersonalityAssessmentResults)
+          this.series2[0].data=[JSON.parse(localStorage.getItem("PersonalityAssessmentResults")).cOPN,
+            JSON.parse(localStorage.getItem("PersonalityAssessmentResults")).cCON,
+            JSON.parse(localStorage.getItem("PersonalityAssessmentResults")).cEXT,
+            JSON.parse(localStorage.getItem("PersonalityAssessmentResults")).cAGR,
+            JSON.parse(localStorage.getItem("PersonalityAssessmentResults")).cNEU]
+          
+        }
+      if ( "EmotionExtractionResults_user_Q_1" in localStorage && "EmotionExtractionResults_user_Q_2" in localStorage && "EmotionExtractionResults_user_Q_3" in localStorage){
+        if("PersonalityAssessmentResults" in localStorage &&  "Resume_user" in localStorage ){
+          this.waitForResults=false;
+        }
+        
+
+        Question1_data=JSON.parse(localStorage.getItem("EmotionExtractionResults_user_Q_1"));
+        Question2_data=JSON.parse(localStorage.getItem("EmotionExtractionResults_user_Q_2"));
+        Question3_data=JSON.parse(localStorage.getItem("EmotionExtractionResults_user_Q_3"));
         let total_count=Question1_data['count']+Question2_data['count']+Question3_data['count'];
-        this.waitForResults=false;
+        
         this.series=[
           (Question1_data['Happy']+Question2_data['Happy']+Question3_data['Happy'])*100/total_count,
           (Question1_data['Contempt']+Question2_data['Contempt']+Question3_data['Contempt'])*100/total_count,
@@ -125,9 +153,12 @@ export default {
       }
       else{
         this.waitForResults=true;
-        this.series=[0,0,0,0,0,0,0,0]
-         
       }
+      /*
+      if (Question1_data!== "undefined" && Question2_data!== "undefined" && Question3_data!== "undefined"){
+        
+      }*/
+      
       
    
   },

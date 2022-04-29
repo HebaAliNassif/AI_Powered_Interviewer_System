@@ -14,7 +14,7 @@
           <v-tabs-slider color="white"></v-tabs-slider>
           <v-tab to="/upload_resume">Phase 1</v-tab>
           <v-tab to="/interview">Phase 2</v-tab>
-          <v-tab to="/result">Result</v-tab>
+          <v-tab :disabled="ResultsNotReady" to="/result">Result</v-tab>
         </v-tabs>
       </template>
       <v-spacer></v-spacer>
@@ -35,7 +35,15 @@ export default {
   data: () => ({
     drawer: false,
       group: null,
+      ResultsNotReady:true,
+
     //
   }),
+  created() {
+    if ( "PersonalityAssessmentResults" in localStorage || "EmotionExtractionResults_user_Q_1" in localStorage || "EmotionExtractionResults_user_Q_2" in localStorage || "EmotionExtractionResults_user_Q_3" in localStorage ||  "Resume_user" in localStorage )
+    {
+      this.ResultsNotReady=false;
+    }
+  },
 };
 </script>

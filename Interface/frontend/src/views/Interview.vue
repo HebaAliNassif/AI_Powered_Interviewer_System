@@ -8,7 +8,7 @@
     <h2>Interview phase:</h2>
     <p>
       we are going to ask you some questions, each question you will hear it by
-      our machine and will appear infront of you and you will be given 1 min to
+      our machine and will be written infront of you and you will be given 1 min to
       answer on each question with camera opened. Note that once you press the
       start button, the first question will appear and the black screen will be
       activated and you should press on the middle of it once it is activated
@@ -161,6 +161,17 @@ export default {
     },
     VideoProcessing() {
       if (this.$store.state.questionNumber > 2) {
+        const path = "http://localhost:5000/personality_assessment";
+            axios
+              .get(path, {
+               
+              })
+              .then( res => {
+                localStorage.setItem('PersonalityAssessmentResults',JSON.stringify(res.data));
+              })
+              .catch((error) => {
+                console.error(error);
+              });
         this.$router.push("/result");
         return;
       }
@@ -182,15 +193,12 @@ export default {
     },
   },
   created() {
-    //temp for testing
-    //localStorage.clear()
-    // uncomment when we finish testing to force the user to the results page if the user already finished the interview phase
-    /*let Question1_data=JSON.parse(localStorage.getItem("EmotionExtractionResults_user_Q_1"))
-      let Question2_data=JSON.parse(localStorage.getItem("EmotionExtractionResults_user_Q_2"))
-      let Question3_data=JSON.parse(localStorage.getItem("EmotionExtractionResults_user_Q_3"))
-    if(Question1_data!=null && Question2_data!=null && Question3_data!=null){
+    if ( "PersonalityAssessmentResults" in localStorage && "EmotionExtractionResults_user_Q_1" in localStorage && "EmotionExtractionResults_user_Q_2" in localStorage && "EmotionExtractionResults_user_Q_3" in localStorage)
+    {
       this.$router.push("/result");
-    }*/
+    }
+    
+    
   },
 };
 </script>
