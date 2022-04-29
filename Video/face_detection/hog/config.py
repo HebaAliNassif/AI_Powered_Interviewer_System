@@ -13,4 +13,4 @@ CBCL_DATASET = False
 
 EXTRACT_FEATURES = True
 
-MODEL_PATH = "models/model-2022-04-25"
+MODEL_PATH = "models/model-2022-04-28"

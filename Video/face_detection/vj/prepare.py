@@ -80,7 +80,7 @@ if __name__ == '__main__':
     clf.prepare(P_train, N_train, shuffle=True, verbose=True, max_parallel_process=4)
     
     time_full_feature_comp = time() - t_start
-    """
+    
     print("...done.\n\tTime Elapsed:", time_full_feature_comp)
     print("-" * 80, "\n")
     
@@ -89,4 +89,4 @@ if __name__ == '__main__':
     print("-" * 80)
     clf.saveFeaturesData(config.FEATURES_PATH +"/"+ DatasetName)
     print("...done.\n")
-    print("-" * 80, "\n")"""
+    print("-" * 80, "\n")

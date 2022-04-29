@@ -1,21 +1,21 @@
 import numpy as np
 import cv2
 from scipy.ndimage.filters import gaussian_filter
-import config
+import config_
 def getEyesCenter(face_BGR):
     
     eyeCenterLocator = EyeCenterLocator()
     img_GRAY = cv2.cvtColor(face_BGR, cv2.COLOR_BGR2GRAY)
     
-    eye_region_width = face_BGR.shape[0] * (config.K_EYE_PERCENT_WIDTH/100.0)
-    eye_region_height = face_BGR.shape[0] * (config.K_EYE_PERCENT_HEIGHT/100.0)
-    eye_region_top = face_BGR.shape[1] * (config.K_EYE_PERCENT_TOP/100.0)
+    eye_region_width = face_BGR.shape[0] * (config_.K_EYE_PERCENT_WIDTH/100.0)
+    eye_region_height = face_BGR.shape[0] * (config_.K_EYE_PERCENT_HEIGHT/100.0)
+    eye_region_top = face_BGR.shape[1] * (config_.K_EYE_PERCENT_TOP/100.0)
     
     leftEyeRegion = (1,1,1,1)
     rightEyeRegion = (1,1,1,1)
 
-    leftEyeRegion = int(face_BGR.shape[0]*(config.K_EYE_PERCENT_SIDE/100.0)), int(eye_region_top), int(eye_region_width), int(eye_region_height)
-    rightEyeRegion = int(face_BGR.shape[0] - eye_region_width - face_BGR.shape[0]*(config.K_EYE_PERCENT_SIDE/100.0)), int(eye_region_top),int(eye_region_width),int(eye_region_height)
+    leftEyeRegion = int(face_BGR.shape[0]*(config_.K_EYE_PERCENT_SIDE/100.0)), int(eye_region_top), int(eye_region_width), int(eye_region_height)
+    rightEyeRegion = int(face_BGR.shape[0] - eye_region_width - face_BGR.shape[0]*(config_.K_EYE_PERCENT_SIDE/100.0)), int(eye_region_top),int(eye_region_width),int(eye_region_height)
     
     x1, y1, w1, h1 = (leftEyeRegion)
     region_left = img_GRAY[int(y1) :int(y1) + int(h1) , int(x1) :int(x1) + int(w1)]
