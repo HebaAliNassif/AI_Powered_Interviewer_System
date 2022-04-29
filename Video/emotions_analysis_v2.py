@@ -5,13 +5,14 @@ import cv2
 import numpy as np
 from skimage import color, feature
 import config
+sys.path.append(os.path.join(os.path.dirname(__file__), "face_alignment"))
 sys.path.append(os.path.join(os.path.dirname(__file__), "face_detection"))
 sys.path.append(os.path.join(os.path.dirname(__file__), "face_detection/vj"))
 sys.path.append(os.path.join(os.path.dirname(__file__), "face_detection/hog"))
 from hog import HogClassifier
 from face_detector import FaceDetector
 from mergerect import mergeRects
-
+from face_aligner import FaceAligner
 
 
 def openCV_detectface(image):
@@ -54,6 +55,7 @@ def vj_hog_detectface(image):
         face = cv2.resize(face, (hogModel.detectWndW, hogModel.detectWndH))
         pred = hogModel.clf.predict([feature.hog(face)])
         if pred[0]:
+            #face = faceAligner.align_face(image, (x, y, w, h))
             return True, face
     return False, None
 def analyse_emotions(video_path, opencv_fd=True, frames_path=None, faces_path=None):        
@@ -87,8 +89,10 @@ if __name__ == '__main__':
     print("-" * 80)
     global faceDetector
     global hogModel
+    global faceAligner
     faceDetector = FaceDetector(config.VJ_MODEL_PATH)
     hogModel = HogClassifier.loadModel(config.HOG_MODEL_PATH)
+    faceAligner = FaceAligner(desiredFaceWidth=100)
     print("...done.\n" + "-" * 80, "\n")
     
     print("-" * 80)
