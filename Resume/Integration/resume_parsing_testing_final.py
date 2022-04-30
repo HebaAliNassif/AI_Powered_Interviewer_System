@@ -31,14 +31,14 @@ from collections import OrderedDict
 import sys
 import re
 import pdfx
-
-""" nltk.download('punkt')
+'''
+nltk.download('punkt')
 nltk.download('stopwords')
 nltk.download('wordnet')
-nltk.download('omw-1.4') """
-
+nltk.download('omw-1.4')
+'''
  ## Getting Matrix for TFIDF for each word in all documents
-train_df = pd.read_csv("train_tf_idf.csv", index_col=0)
+train_df = pd.read_csv("../../Resume/Integration/train_tf_idf.csv", index_col=0)
 
 """# Pre-processing
 * It consists of some main steps
@@ -288,7 +288,7 @@ def main(file_name):
       cat_sim = col
     #print(col, sim_score)
 
-  print("########\nWinning Category:", cat_sim, "\nWith Score:", max_score)
+  #print("########\nWinning Category:", cat_sim, "\nWith Score:", max_score)
 
   scores_dict = sorted(scores_dict.items(), key=lambda item: item[1], reverse= True)
   sorted_dict = dict()
@@ -317,11 +317,11 @@ def test_func(file_name):
   overview_dict = overview_extraction(my_txt, pdf_file)
   output_dict["Ranking"] = scores_dict
   output_dict["Overview"] = overview_dict
-  print(output_dict)
+  #print(output_dict)
   return output_dict
 
 
 
-if __name__ == '__main__':
-  globals()[sys.argv[1]](sys.argv[2])
+#if __name__ == '__main__':
+#  globals()[sys.argv[1]](sys.argv[2])
 

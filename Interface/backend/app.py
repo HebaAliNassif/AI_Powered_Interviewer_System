@@ -4,11 +4,12 @@ import os
 import subprocess
 from werkzeug.utils import secure_filename
 import time
+import sys
 # importing our modules files
 import SpeechToText
 import moviepy
 from moviepy.editor import VideoFileClip
-import sys
+
 #sys.path.insert(1, "../../Video/emotions_analysis")
 #import emotions_analysis
 sys.path.insert(0, '../../')
@@ -16,14 +17,20 @@ sys.path.insert(1, "../../Video")
 sys.path.insert(4, "../../Video/face_alignment")
 sys.path.insert(2, "../../Video/face_detection/vj")
 sys.path.insert(3, "../../Video/face_detection/hog")
+#sys.path.insert(5, "../../Resume")
+
 ###############OUR MODULES IMPORTS#################
-from Video.emotions_analysis_v2 import analyse_emotions
-from FaceEmotionExtraction.FaceEmotionExtraction_ManualImplementedHOG_IntegrationTest import accumaltive_emotion_extraction_probabilities
 from PersonalityAssessment.Files.PersonalityAssessment import predictPersonality
+from Resume.Integration.resume_parsing_testing_final import test_func
+
+from FaceEmotionExtraction.FaceEmotionExtraction_ManualImplementedHOG_IntegrationTest import accumaltive_emotion_extraction_probabilities
+from Video.emotions_analysis_v2 import analyse_emotions
 from Video.face_detection.hog.hog import HogClassifier
 from Video.face_detection.face_detector import FaceDetector
 from Video.face_alignment.face_aligner import FaceAligner
 from Video import config
+
+
 # configuration
 DEBUG = True
 UPLOAD_VIDEOS_FOLDER = 'Videos'
@@ -52,9 +59,9 @@ def before_first_request():
     global hogModel
     global faceAligner
     print("Loading the models")
-    faceDetector= FaceDetector("../../Video/"+config.VJ_MODEL_PATH)
-    hogModel = HogClassifier.loadModel("../../Video/"+config.HOG_MODEL_PATH)
-    faceAligner = FaceAligner(desiredFaceWidth=100) 
+    #faceDetector= FaceDetector("../../Video/"+config.VJ_MODEL_PATH)
+    #hogModel = HogClassifier.loadModel("../../Video/"+config.HOG_MODEL_PATH)
+    #faceAligner = FaceAligner(desiredFaceWidth=100) 
     end = time.time()
     print("loading Models takes: "+str(end - start)+" secs")
 
@@ -148,15 +155,17 @@ def add_resume():
     username=request.form['username']
     filename = secure_filename(file.filename)
     new_file = username + '.' + 'pdf'
-    file.save(os.path.join(app.config['UPLOAD_CVS_FOLDER'], new_file))
+    file_path=os.path.join(app.config['UPLOAD_CVS_FOLDER'], new_file)
+    file.save(file_path)
 
     #passing the file to resume filtering module
     print("Resume Filtering start")
     start = time.time()
+    ResumeResults=test_func(file_path)
     end = time.time()
     print("Resume Filtering module takes: "+str(end - start)+" secs")
     # return dictionary of user statistics and probabilities
-    return jsonify('file received')
+    return jsonify(ResumeResults)
 
 
 if __name__ == '__main__':

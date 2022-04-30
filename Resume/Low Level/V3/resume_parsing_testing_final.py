@@ -31,14 +31,16 @@ from collections import OrderedDict
 import sys
 import re
 import pdfx
+import os
 
-""" nltk.download('punkt')
+nltk.download('punkt')
 nltk.download('stopwords')
 nltk.download('wordnet')
-nltk.download('omw-1.4') """
-
+nltk.download('omw-1.4') 
+#sys.path.append(os.path.join(os.path.dirname(__file__), "Integration"))
  ## Getting Matrix for TFIDF for each word in all documents
-train_df = pd.read_csv("train_tf_idf.csv", index_col=0)
+file_path= 'train_tf_idf.csv'
+train_df = pd.read_csv(file_path, index_col=0)
 
 """# Pre-processing
 * It consists of some main steps
@@ -322,6 +324,6 @@ def test_func(file_name):
 
 
 
-if __name__ == '__main__':
-  globals()[sys.argv[1]](sys.argv[2])
+#if __name__ == '__main__':
+#  globals()[sys.argv[1]](sys.argv[2])
 

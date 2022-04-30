@@ -81,7 +81,7 @@ export default {
           .get(path, {
           })
           .then((res) => {
-            console.error(res.data);
+            console.log(res.data);
             
           })
           .catch((error) => {
