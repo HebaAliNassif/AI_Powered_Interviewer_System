@@ -293,7 +293,15 @@ def main(file_name):
   scores_dict = sorted(scores_dict.items(), key=lambda item: item[1], reverse= True)
   sorted_dict = dict()
   for k, v in scores_dict:
-      sorted_dict[k] = v
+    if k == 'business-development':
+      k = 'business_development'
+    elif k == 'information-technology':
+      k = 'information_technology'
+    elif k == 'public-relations':
+      k = 'public_relations'
+    elif k == 'digital-media':
+      k = 'digital_media'
+    sorted_dict[k] = v
 
   return TF_IDF_test, train_df, TF_cat, sorted_dict
 
