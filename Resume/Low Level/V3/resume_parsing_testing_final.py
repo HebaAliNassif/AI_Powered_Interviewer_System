@@ -37,6 +37,9 @@ nltk.download('stopwords')
 nltk.download('wordnet')
 nltk.download('omw-1.4') """
 
+ ## Getting Matrix for TFIDF for each word in all documents
+train_df = pd.read_csv("train_tf_idf.csv", index_col=0)
+
 """# Pre-processing
 * It consists of some main steps
     * Lowercase
@@ -257,19 +260,18 @@ def main(file_name):
   sample_df = pd.read_csv(file_name)
   TF_IDF_test = pipeline(file_name)
 
-  ## Getting Matrix for TFIDF for each word in all documents
-  df = pd.read_csv("train_tf_idf.csv", index_col=0)
+ 
   ## Getting the Categories Names
   TF_cat = pd.DataFrame(
-                  columns=pd.Index(df.columns),
+                  columns=pd.Index(train_df.columns),
                   index=pd.Index([]))
   
   #for item in TF_IDF_test
   for index, row in TF_IDF_test.iterrows():
-    if index not in df.index:
+    if index not in train_df.index:
       TF_cat.loc[index] = 0
     else:      
-      TF_cat.loc[index] = df.loc[index]
+      TF_cat.loc[index] = train_df.loc[index]
 
   scores_dict = dict()
   ## Calculating Similarity
@@ -293,7 +295,7 @@ def main(file_name):
   for k, v in scores_dict:
       sorted_dict[k] = v
 
-  return TF_IDF_test, df, TF_cat, sorted_dict
+  return TF_IDF_test, train_df, TF_cat, sorted_dict
 
 def test_func(file_name):
   ID = file_name.split(".")[0]
