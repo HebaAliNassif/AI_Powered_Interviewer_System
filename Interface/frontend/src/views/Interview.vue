@@ -127,7 +127,7 @@ export default {
         } else {
           recorded_videos.add(player.convertedData);
         }
-        if (recorded_videos.size == 3) {
+        if (recorded_videos.size == 1) {
           let index = 0;
           
           recorded_videos.forEach(async (video) => {
@@ -193,6 +193,17 @@ export default {
     },
   },
   created() {
+    const path = "http://localhost:5000/load_models";
+        axios
+          .get(path, {
+          })
+          .then((res) => {
+            console.error(res.data);
+            
+          })
+          .catch((error) => {
+            console.error(error);
+          });
     if ( "PersonalityAssessmentResults" in localStorage && "EmotionExtractionResults_user_Q_1" in localStorage && "EmotionExtractionResults_user_Q_2" in localStorage && "EmotionExtractionResults_user_Q_3" in localStorage)
     {
       this.$router.push("/result");

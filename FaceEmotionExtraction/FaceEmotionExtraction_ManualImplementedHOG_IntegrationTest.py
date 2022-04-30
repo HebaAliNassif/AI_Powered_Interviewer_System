@@ -20,10 +20,13 @@ from sklearn.multiclass import OneVsRestClassifier
 
 from sklearn.svm import SVC
 import pickle
+import time
 
+start = time.time()
 filename = 'C:\\Users\\THINK\\Desktop\\College\\GP\\emotion_extraction\\Emotion-Recognition-From-Facial-Expressions-master\\Trail1\\AffectNet_5000_svcOnly_rpf_manualFeatExt_model.sav'        
 clf = pickle.load(open(filename, 'rb'))
-
+end = time.time()
+print("loading Emotion Model takes: "+str(end - start)+" secs")
 cell=[8,8]
 incr=[8,8]
 classes = ["Happy","Contempt","Anger","Disgust","Fear","Sad","Surprise","Neutral"]
@@ -117,7 +120,7 @@ def feature_Extraction(img):
     hog_features = np.expand_dims(hog_features,axis=0)
     return hog_features
         
-def accumaltive_emotion_extraction_probabilities(imagesPath):
+def accumaltive_emotion_extraction_probabilities(listOfImages):
 	accumaltive_emotion_extraction_probabilities_dict={
 		"Happy":0,
 		"Contempt":0,
@@ -130,19 +133,19 @@ def accumaltive_emotion_extraction_probabilities(imagesPath):
 		"count":0
 	}
 	count=0
-	for filename in glob.glob(imagesPath + '/*.*'):
+	for image in listOfImages :
 		count=count+1
 		win_size = (64, 128)
-		img = getImage(filename)
-		img = cv2.resize(img, win_size)
-		img = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+		#img = getImage(image)
+		img = cv2.resize(image, win_size)
+		#img = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
 
 		feat=feature_Extraction(img)
 
 		pred_value=int(clf.predict([feat.flatten().tolist()]))
-		proba = clf.predict_proba([feat.flatten().tolist()])
+		#proba = clf.predict_proba([feat.flatten().tolist()])
 		accumaltive_emotion_extraction_probabilities_dict[classes[pred_value]]+=1
-		print("image "+str(count)+" :"+classes[pred_value]+" "+str(proba[0][pred_value]))
+		#print("image "+str(count)+" :"+classes[pred_value]+" "+str(proba[0][pred_value]))
 	accumaltive_emotion_extraction_probabilities_dict['count']=count
 	return accumaltive_emotion_extraction_probabilities_dict
 		

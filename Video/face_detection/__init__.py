@@ -1,5 +1,5 @@
 from .face_detector import FaceDetector
-from .mergerect import mergeRects, getOverlapRect, genRectFromList, Rect
+from .mergerect import mergeRects, getOverlapRect, Rect
 
 __all__ = [
     "FaceDetector",

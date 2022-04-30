@@ -1,12 +1,19 @@
 <template>
   <v-app>
     <br />
+    <div class="text-center">
     <v-alert
     v-show="this.waitForResults"
   border="top"
   elevation="9"
   type="info"
 >Please wait untill all the results are prepared..try to refresh the page after some time</v-alert>
+    <v-progress-circular a
+      v-show="this.waitForResults"
+      indeterminate
+      color="primary"
+    ></v-progress-circular>
+    </div>
     <div style="display: flex;
     flex-direction: row;
     font-family: auto;
