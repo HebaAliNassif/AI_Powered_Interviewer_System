@@ -55,7 +55,7 @@ export default {
         console.log("sending pdf ");
         console.log(this.files);
         formData.append("cv", this.files);
-        formData.append("username", "aya_cv");//to be edited
+        formData.append("username", "user_cv");//to be edited
         const path = "http://localhost:5000/add_resume";
         axios
           .post(path, formData, {
@@ -65,6 +65,7 @@ export default {
           })
           .then((res) => {
             console.log(res.data);
+            localStorage.setItem('Resume_user',JSON.stringify(res.data));
           })
           .catch((error) => {
             console.error(error);
@@ -74,6 +75,11 @@ export default {
       }
     },
   },
-  created() {},
+  created() {
+    if ( "Resume_user" in localStorage )
+    {
+      this.$router.push("/result");
+    }
+  },
 };
 </script>

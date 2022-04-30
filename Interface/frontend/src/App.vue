@@ -14,42 +14,13 @@
           <v-tabs-slider color="white"></v-tabs-slider>
           <v-tab to="/upload_resume">Phase 1</v-tab>
           <v-tab to="/interview">Phase 2</v-tab>
-          <v-tab to="/result">Result</v-tab>
+          <v-tab :disabled="ResultsNotReady" to="/result">Result</v-tab>
         </v-tabs>
       </template>
       <v-spacer></v-spacer>
-      <v-app-bar-nav-icon @click="drawer = true"></v-app-bar-nav-icon>
+      
     </v-app-bar>
-    <v-navigation-drawer
-      v-model="drawer"
-      absolute
-      temporary
-      right
-    >
-      <v-list
-        nav
-        dense
-      >
-        <v-list-item-group
-          v-model="group"
-          active-class="blue--text text--accent-4"
-        >
-          <v-list-item>
-            <v-list-item-icon>
-              <v-icon>mdi-home</v-icon>
-            </v-list-item-icon>
-            <v-list-item-title>Home</v-list-item-title>
-          </v-list-item>
-
-          <v-list-item>
-            <v-list-item-icon>
-              <v-icon>mdi-account</v-icon>
-            </v-list-item-icon>
-            <v-list-item-title>Account</v-list-item-title>
-          </v-list-item>
-        </v-list-item-group>
-      </v-list>
-    </v-navigation-drawer>
+   
     <v-main>
       <router-view/>
     </v-main>
@@ -64,7 +35,15 @@ export default {
   data: () => ({
     drawer: false,
       group: null,
+      ResultsNotReady:true,
+
     //
   }),
+  created() {
+    if ( "PersonalityAssessmentResults" in localStorage || "EmotionExtractionResults_user_Q_1" in localStorage || "EmotionExtractionResults_user_Q_2" in localStorage || "EmotionExtractionResults_user_Q_3" in localStorage ||  "Resume_user" in localStorage )
+    {
+      this.ResultsNotReady=false;
+    }
+  },
 };
 </script>

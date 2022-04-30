@@ -1,3 +1,8 @@
 *.docx
 *.pdf
 Resume/Low Level/Datasets/Resume/Resume.csv
+*.mp4
+*.wav
+__pycache__/
+*.rar
+.ipynb_checkpoints

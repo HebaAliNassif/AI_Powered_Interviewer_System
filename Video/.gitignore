@@ -1,0 +1,8 @@
+*.docx
+*.pdf
+*.jpg
+**/dataset
+/a_video
+/face_detection/trials
+/face_detection/viola_jones
+/face_detection/viola_jones_high_level
