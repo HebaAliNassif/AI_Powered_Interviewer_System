@@ -13,8 +13,9 @@ Testing Module
 # Imports
 """
 
-#!pip install PyMuPDF
-#!pip install docx2pdf
+# !pip install PyMuPDF
+# !pip install docx2pdf
+#!pip install pdfx
 
 import pandas as pd
 import numpy as np
@@ -28,6 +29,8 @@ import fitz
 from docx2pdf import convert
 from collections import OrderedDict
 import sys
+import re
+import pdfx
 
 """ nltk.download('punkt')
 nltk.download('stopwords')
@@ -152,11 +155,55 @@ def TF_IDF(TF, IDF):
 
 """## Overview"""
 
-def overview_extraction(inp_txt):
+def overview_extraction(inp_txt, pdf_file):
+  #print("Debug input:", inp_txt)
   out_dict = dict()
-  out_dict["Phone"] = "011"
-  out_dict["Email"] = "a@g.c"
-  out_dict["Links"] = ["ht.com", "vf.net"]
+  ext_email = list()
+  ext_links = list()
+  phone_no = list()
+
+  ## Email 
+  mail_pattern= r"([a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+)"
+  mail_search = re.findall(mail_pattern, inp_txt, re.M|re.I)
+  if(mail_search):
+    ext_email = mail_search
+    #print("Found Email:", mail_search)
+
+  ## Phone 
+  phone_pattern = r"[0-9]{10}[0-9]{0,2}"
+  phone_search = re.findall(phone_pattern, inp_txt, re.I|re.M)
+  if(phone_search):
+    phone_no = phone_search
+
+  ## Links
+  links_pattern = r"http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+" 
+  links_search = re.findall(links_pattern, inp_txt, re.M|re.I)
+  if(links_search):
+    ext_links = links_search
+    #print("Normal links:", links_search)
+
+  ## Shortened links
+  # short_links_pattern = r"(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+\.(?:com|net|edu|gov|mil|org)(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))*" 
+  # short_links_search = re.findall(short_links_pattern, inp_txt, re.M|re.I)
+  # if short_links_search:
+  #   for item in short_links_search:
+  #     if item not in ext_email and item not in ext_links:
+  #       ext_links.append(item)
+  #   print("Found Short Link:", short_links_search)
+
+  ## references
+  #print("EMail list type:", type(ext_email))
+  #print("Check:", 'maram311999@gmail.com' not in ext_email)
+  try:
+    for link in pdf_file.get_references_as_dict()['url']:
+      if (link not in ext_links) and not link.startswith('mailto:'):
+        ext_links.append(link)
+  except:
+    print("No URLs found!")
+
+  out_dict["Phone"] = phone_no
+  out_dict["Email"] = ext_email
+  out_dict["Links"] = ext_links
   return out_dict
 
 """# Pipeline"""
@@ -195,12 +242,15 @@ def read_pdf(fname):
       print("Only PDF and docx types are supported!")
       return
   
-  doc = fitz.open(fname)
-  text = ""
-  for page in doc:
-      text = text + str(page.get_text())
+  doc = pdfx.PDFx(fname)
 
-  return text
+  text = doc.get_text()
+  # doc = fitz.open(fname)
+  # text = ""
+  # for page in doc:
+  #     text = text + str(page.get_text())
+
+  return text, doc
 
 def main(file_name):
   ## Building Query TFIDF Vector
@@ -251,7 +301,7 @@ def test_func(file_name):
   output_dict = dict()
   overview_dict = dict()
   try:
-    my_txt= read_pdf(file_name)
+    my_txt, pdf_file= read_pdf(file_name)
   except:
     print("No such file!")
     return output_dict
@@ -262,14 +312,14 @@ def test_func(file_name):
   build_df = build_df.append(dict_str, ignore_index = True)
   build_df.to_csv(ID+".csv")
   TF_IDF_vec_query, weights_df, TF_IDF_vec_train, scores_dict = main(ID+".csv")
-  overview_dict = overview_extraction(my_txt)
+  overview_dict = overview_extraction(my_txt, pdf_file)
   output_dict["Ranking"] = scores_dict
   output_dict["Overview"] = overview_dict
   print(output_dict)
   return output_dict
 
-#scores_dict = test_func("15858254.pdf")
-#print(scores_dict)
+
 
 if __name__ == '__main__':
-    globals()[sys.argv[1]](sys.argv[2])
+  globals()[sys.argv[1]](sys.argv[2])
+
