@@ -9,10 +9,13 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "face_alignment"))
 sys.path.append(os.path.join(os.path.dirname(__file__), "face_detection"))
 sys.path.append(os.path.join(os.path.dirname(__file__), "face_detection/vj"))
 sys.path.append(os.path.join(os.path.dirname(__file__), "face_detection/hog"))
-from hog import HogClassifier
-from face_detector import FaceDetector
+#from hog import HogClassifier
+#from face_detector import FaceDetector
 from mergerect import mergeRects
-from face_aligner import FaceAligner
+#from face_aligner import FaceAligner
+#print(os.getcwd())
+
+
 
 
 def openCV_detectface(image):
@@ -35,7 +38,7 @@ def openCV_detectface(image):
     else:
         return False, None
         
-def vj_hog_detectface(image):
+def vj_hog_detectface(image,faceDetector,hogModel,faceAligner):
 
     image = cv2.resize(image, (0,0), fx=0.4, fy=0.4)
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -58,8 +61,8 @@ def vj_hog_detectface(image):
             #face = faceAligner.align_face(image, (x, y, w, h))
             return True, face
     return False, None
-def analyse_emotions(video_path, opencv_fd=True, frames_path=None, faces_path=None):        
-    
+def analyse_emotions(video_path,faceDetector,hogModel,faceAligner, opencv_fd=True, frames_path=None):        
+    ListOfFaceDetectedImages=[]
     video = cv2.VideoCapture(video_path)
     sucess, frame = video.read()
     count = 0
@@ -75,21 +78,24 @@ def analyse_emotions(video_path, opencv_fd=True, frames_path=None, faces_path=No
         if opencv_fd:
             found, face = openCV_detectface(frame)
         else:
-            found, face = vj_hog_detectface(frame)
+            found, face = vj_hog_detectface(frame,faceDetector,hogModel,faceAligner)
             
-        if faces_path and found:
-            os.makedirs(os.path.split(faces_path+"/")[0], exist_ok=True)
-            cv2.imwrite(faces_path+"/face%d.jpg"%count, face)
+        if found:
+            #os.makedirs(os.path.split(faces_path+"/")[0], exist_ok=True)
+            #print("ListOfFaceDetectedImages append image:"+str(count))
+            ListOfFaceDetectedImages.append(face)
+            #cv2.imwrite(faces_path+"/face%d.jpg"%count, face)
         
         sucess, frame = video.read()
-        
+    return ListOfFaceDetectedImages    
+
+
+''''        
 if __name__ == '__main__':
     print("-" * 80)
     print("Loading Models")
     print("-" * 80)
-    global faceDetector
-    global hogModel
-    global faceAligner
+    
     faceDetector = FaceDetector(config.VJ_MODEL_PATH)
     hogModel = HogClassifier.loadModel(config.HOG_MODEL_PATH)
     faceAligner = FaceAligner(desiredFaceWidth=100)
@@ -111,3 +117,4 @@ if __name__ == '__main__':
     print("...done.\n\tTime Elapsed:", time_full_face_detection)
     print("-" * 80, "\n")
     faceDetector.stopParallel()
+'''

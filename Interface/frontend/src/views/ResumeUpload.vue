@@ -70,12 +70,23 @@ export default {
           .catch((error) => {
             console.error(error);
           });
-        //push to second stage if cv is accepted
-        //this.$router.push("/interview");
+        
+        this.$router.push("/interview");
       }
     },
   },
   created() {
+    const path = "http://localhost:5000/load_models";
+        axios
+          .get(path, {
+          })
+          .then((res) => {
+            console.error(res.data);
+            
+          })
+          .catch((error) => {
+            console.error(error);
+          });
     if ( "Resume_user" in localStorage )
     {
       this.$router.push("/result");
