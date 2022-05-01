@@ -61,12 +61,15 @@ def vj_hog_detectface(image,faceDetector,hogModel,faceAligner):
             #face = faceAligner.align_face(image, (x, y, w, h))
             return True, face
     return False, None
-def analyse_emotions(video_path,faceDetector,hogModel,faceAligner, opencv_fd=True, frames_path=None):        
+def analyse_emotions(video_path,faceDetector,hogModel,faceAligner, opencv_fd=True, frames_path=None, faces_path=None,frameRate_=0.2):
     ListOfFaceDetectedImages=[]
     video = cv2.VideoCapture(video_path)
     sucess, frame = video.read()
     count = 0
+    sec = 0 
+    frameRate = frameRate_
     while sucess:
+        
         count += 1
         
         if frames_path:
@@ -81,16 +84,22 @@ def analyse_emotions(video_path,faceDetector,hogModel,faceAligner, opencv_fd=Tru
             found, face = vj_hog_detectface(frame,faceDetector,hogModel,faceAligner)
             
         if found:
-            #os.makedirs(os.path.split(faces_path+"/")[0], exist_ok=True)
             #print("ListOfFaceDetectedImages append image:"+str(count))
             ListOfFaceDetectedImages.append(face)
-            #cv2.imwrite(faces_path+"/face%d.jpg"%count, face)
+            if faces_path:
+                os.makedirs(os.path.split(faces_path+"/")[0], exist_ok=True)
+                cv2.imwrite(faces_path+"/face%d.jpg"%count, face)
         
+        video.set(cv2.CAP_PROP_POS_MSEC,sec*1000) 
         sucess, frame = video.read()
+        
+        sec = sec + frameRate 
+        sec = round(sec, 2)
+        
     return ListOfFaceDetectedImages    
 
 
-''''        
+'''
 if __name__ == '__main__':
     print("-" * 80)
     print("Loading Models")
@@ -109,12 +118,11 @@ if __name__ == '__main__':
     
     # To visualize farmes and detected faces, use
     #analyse_emotions(config.VIDEO_PATH+"/"+config.VIDEO_NAME, config.OPENCV_FACE_DETECTION, config.FRAMES_DIRECTORY, faces_path=config.FACES_DIRECTORY)
-    analyse_emotions(config.VIDEO_PATH+"/"+config.VIDEO_NAME, config.OPENCV_FACE_DETECTION, faces_path=config.FACES_DIRECTORY)
+    analyse_emotions(config.VIDEO_PATH+"/"+config.VIDEO_NAME, faceDetector, hogModel, faceAligner, config.OPENCV_FACE_DETECTION, faces_path=config.FACES_DIRECTORY)
     # else, use
     #analyse_emotions(config.VIDEO_PATH+"/"+config.VIDEO_NAME, config.OPENCV_FACE_DETECTION)
         
     time_full_face_detection = time() - t_start
     print("...done.\n\tTime Elapsed:", time_full_face_detection)
     print("-" * 80, "\n")
-    faceDetector.stopParallel()
-'''
+    faceDetector.stopParallel()'''
