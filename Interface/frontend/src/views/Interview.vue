@@ -193,6 +193,7 @@ export default {
     },
   },
   created() {
+    
     const path = "http://localhost:5000/load_models";
         axios
           .get(path, {

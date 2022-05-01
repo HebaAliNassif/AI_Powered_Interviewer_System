@@ -105,10 +105,7 @@ export default {
         { text: "Percentage %", align: "center", value: "per" },
       ],
       Fields: [
-        {
-          name: "hr",
-          per: 200,
-        },
+        
       ],
       series: [0, 0, 0, 0, 0, 0, 0, 0],
 
@@ -259,7 +256,7 @@ export default {
         },
         {
           name: "Digital Media",
-          per: Resume_data.Ranking.Digital_Media * 100,
+          per: Resume_data.Ranking.digital_media * 100,
         },
         {
           name: "engineering",
@@ -287,7 +284,7 @@ export default {
         },
         {
           name: "Public Relations",
-          per: Resume_data.Ranking.Public_Relations * 100,
+          per: Resume_data.Ranking.public_relations * 100,
         },
         {
           name: "Teacher",
