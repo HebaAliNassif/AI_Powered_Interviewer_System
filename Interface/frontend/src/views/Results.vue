@@ -73,7 +73,7 @@
     :headers="headers"
     :items="Fields"
     :sort-by="['per']"
-    :sort-desc="[false, true]"
+    :sort-desc="[true, false]"
     class="elevation-5"
   ></v-data-table>
     </div>

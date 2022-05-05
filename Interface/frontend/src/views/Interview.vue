@@ -15,7 +15,7 @@
       then press the record button once you are ready. Note that it will
       automatically send your recording after 1 min or when you press the stop
       recording button then you should press next for the next question to
-      appear and so on. Please make your voice clear and loud. Are you ready?
+      appear and so on. Please make your voice clear, loud and in English. Are you ready?
     </p>
     <br />
     <div class="text-center">
@@ -48,6 +48,8 @@
     <div>
       <video id="myVideo" playsinline class="video-js vjs-default-skin"></video>
     </div>
+    <br />
+    <br />
   </v-app>
 </template>
 <script>
@@ -92,8 +94,9 @@ export default {
         bigPlayButton: false,
         loop: false,
         fluid: true,
-        width: 400,
-        height: 400,
+        width: 300,
+        height: 300,
+        responsive: true,
         plugins: {
           // videojs-record plugin options
           record: {
@@ -231,10 +234,15 @@ video {
   margin-right: auto;
   display: block;
 }
-.video-js[tabindex="-1"] {
-  outline: 0;
-  margin-left: auto;
-  margin-right: auto;
-  display: block;
+
+.video-js[tabindex="-1"]{
+    outline: 0;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    position: relative !important;
+    width:80% !important;
+    height: auto !important;
+    
 }
 </style>

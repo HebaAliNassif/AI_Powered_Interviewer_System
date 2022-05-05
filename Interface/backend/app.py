@@ -123,6 +123,7 @@ def video_processing():
 @app.route('/speech_to_text', methods=['POST'])
 @cross_origin(origin='http://localhost:8080',headers=['Content-Type'])
 def speech_to_text():
+    
     print("Speech To Text processing start")
     #recieving the videos and saving it locally 
     file = request.files['webcam']
@@ -150,7 +151,6 @@ def speech_to_text():
     end = time.time()
     print("Speech to Text module of video "+username+" takes: "+str(end - start)+" secs")
     
-   
     return jsonify('Speech To Text Module is done')
 
 @app.route('/personality_assessment', methods=['GET'])

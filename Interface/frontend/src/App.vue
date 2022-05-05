@@ -13,7 +13,7 @@
         <v-tabs fixed-tabs align-with-title>
           <v-tabs-slider color="white"></v-tabs-slider>
           <v-tab to="/upload_resume">Phase 1</v-tab>
-          <v-tab to="/interview">Phase 2</v-tab>
+          <v-tab :disabled="ResumeNotReady" to="/interview">Phase 2</v-tab>
           <v-tab :disabled="ResultsNotReady" to="/result">Result</v-tab>
         </v-tabs>
       </template>
@@ -36,6 +36,7 @@ export default {
     drawer: false,
       group: null,
       ResultsNotReady:true,
+      ResumeNotReady:true,
 
     //
   }),
@@ -43,6 +44,9 @@ export default {
     if ( "PersonalityAssessmentResults" in localStorage || "EmotionExtractionResults_user_Q_1" in localStorage || "EmotionExtractionResults_user_Q_2" in localStorage || "EmotionExtractionResults_user_Q_3" in localStorage ||  "Resume_user" in localStorage )
     {
       this.ResultsNotReady=false;
+    }
+    if ("Resume_user" in localStorage ){
+      this.ResumeNotReady=false
     }
   },
 };

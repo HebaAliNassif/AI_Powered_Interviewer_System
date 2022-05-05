@@ -8,6 +8,11 @@ import Results from '../views/Results.vue'
 
 const routes = [
   {
+    path: '/',
+    name: 'upload_resume',
+    component: UploadResume
+  },
+  {
     path: '/upload_resume',
     name: 'upload_resume',
     component: UploadResume
