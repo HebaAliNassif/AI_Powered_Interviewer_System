@@ -44,7 +44,7 @@ def vj_hog_detectface(image,faceDetector,hogModel,faceAligner):
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     gray = cv2.equalizeHist(gray)
     
-    faces, totalTiles = faceDetector.detect(
+    faces, totalTiles = faceDetector.detect_seq(
         gray,
         min_size=0.0, max_size=0.3,
         step=0.9, detectPad=(2,2),
