@@ -15,7 +15,7 @@
       then press the record button once you are ready. Note that it will
       automatically send your recording after 1 min or when you press the stop
       recording button then you should press next for the next question to
-      appear and so on. Are you ready?
+      appear and so on. Please make your voice clear and loud. Are you ready?
     </p>
     <br />
     <div class="text-center">
@@ -78,7 +78,7 @@ export default {
       questions: [
         "Please tell us about yourself in 1 min",
         "Why did you decide to apply to this role?",
-        "What do you know about our company",
+        "What do you know about our company?",
       ],
     };
   },
@@ -127,7 +127,7 @@ export default {
         } else {
           recorded_videos.add(player.convertedData);
         }
-        if (recorded_videos.size == 1) {
+        if (recorded_videos.size == 3) {
           let index = 0;
           
           recorded_videos.forEach(async (video) => {
@@ -153,6 +153,19 @@ export default {
               .catch((error) => {
                 console.error(error);
               });
+            const path2 = "http://localhost:5000/speech_to_text";
+            axios
+              .post(path2, formData, {
+                headers: {
+                  "Content-Type": "multipart/form-data",
+                },
+              })
+              .then( res => {
+                console.log(res);
+              })
+              .catch((error) => {
+                console.error(error);
+              });  
           });
         }
 

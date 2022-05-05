@@ -59,9 +59,9 @@ def before_first_request():
     global hogModel
     global faceAligner
     print("Loading the models")
-    #faceDetector= FaceDetector("../../Video/"+config.VJ_MODEL_PATH)
-    #hogModel = HogClassifier.loadModel("../../Video/"+config.HOG_MODEL_PATH)
-    #faceAligner = FaceAligner(desiredFaceWidth=100) 
+    faceDetector= FaceDetector("../../Video/"+config.VJ_MODEL_PATH)
+    hogModel = HogClassifier.loadModel("../../Video/"+config.HOG_MODEL_PATH)
+    faceAligner = FaceAligner(desiredFaceWidth=100) 
     end = time.time()
     print("loading Models takes: "+str(end - start)+" secs")
 
@@ -92,30 +92,13 @@ def ping_pong():
 def video_processing():
     print("Video processing start")
     #recieving the videos and saving it locally 
-    #file = request.files['webcam']
+    file = request.files['webcam']
     username=request.form['username']
     print("Saving video "+username)
-    #filename = secure_filename(file.filename)
+    filename = secure_filename(file.filename)
     new_file = username + '.' + 'mp4'
     file_path=f"{app.config['UPLOAD_VIDEOS_FOLDER']}/{new_file}"
-    #file.save(file_path)
-    
-    
-    #passing videos to speech to text module:
-    #converting .mp4 to .wav
-    print("Converting .mp4 to .wav of video "+username)
-    #SpeechToText.convert_video_to_audio_moviepy(file_path)
-    #new_audio_file = username + '.' + 'wav'
-
-    #extracting the speech and writting in external files
-    print("Extracting the speech of video "+username)
-    #start = time.time()
-    #text=SpeechToText.get_large_audio_transcription(f"{app.config['UPLOAD_VIDEOS_FOLDER']}/{new_audio_file}")
-    #f= open(f"{app.config['UPLOAD_SPEECHTEXT_FOLDER']}/{username}.txt","w+")
-    #f.write(text)
-    #f.close()
-    #end = time.time()
-    #print("Speech to Text module of video "+username+" takes: "+str(end - start)+" secs")
+    file.save(file_path)
     
     #passing videos to face detection module:
     while faceDetector=="" and hogModel=="" and faceAligner=="":
@@ -135,7 +118,40 @@ def video_processing():
 
     #return dictionary of classes probabilities
     return jsonify([username,Acc_emotion_extraction_probs])
-    #return jsonify('ji')
+    #return jsonify('hi')
+
+@app.route('/speech_to_text', methods=['POST'])
+@cross_origin(origin='http://localhost:8080',headers=['Content-Type'])
+def speech_to_text():
+    print("Speech To Text processing start")
+    #recieving the videos and saving it locally 
+    file = request.files['webcam']
+    username=request.form['username']
+    print("Saving video "+username)
+    filename = secure_filename(file.filename)
+    new_file = username + '.' + 'mp4'
+    file_path=f"{app.config['UPLOAD_VIDEOS_FOLDER']}/{new_file}"
+    file.save(file_path)
+    
+    
+    #passing videos to speech to text module:
+    #converting .mp4 to .wav
+    print("Converting .mp4 to .wav of video "+username)
+    SpeechToText.convert_video_to_audio_moviepy(file_path)
+    new_audio_file = username + '.' + 'wav'
+
+    #extracting the speech and writting in external files
+    print("Extracting the speech of video "+username)
+    start = time.time()
+    text=SpeechToText.get_large_audio_transcription(f"{app.config['UPLOAD_VIDEOS_FOLDER']}/{new_audio_file}")
+    f= open(f"{app.config['UPLOAD_SPEECHTEXT_FOLDER']}/{username}.txt","w+")
+    f.write(text)
+    f.close()
+    end = time.time()
+    print("Speech to Text module of video "+username+" takes: "+str(end - start)+" secs")
+    
+   
+    return jsonify('Speech To Text Module is done')
 
 @app.route('/personality_assessment', methods=['GET'])
 @cross_origin(origin='http://localhost:8080')
