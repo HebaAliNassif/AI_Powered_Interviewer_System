@@ -5,18 +5,25 @@
       Congratulation! you have reached the second phase
     </h1>
     <br />
-    <h2>Interview phase:</h2>
-    <p>
-      we are going to ask you some questions, each question you will hear it by
-      our machine and will be written infront of you and you will be given 1 min to
-      answer on each question with camera opened. Note that once you press the
-      start button, the first question will appear and the black screen will be
-      activated and you should press on the middle of it once it is activated
-      then press the record button once you are ready. Note that it will
-      automatically send your recording after 1 min or when you press the stop
-      recording button then you should press next for the next question to
-      appear and so on. Please make your voice clear, loud and in English. Are you ready?
-    </p>
+    <div style="margin-left:1rem">
+    <h2>Interview phase steps:</h2>
+    <ol>
+      <li v-for="step in this.Steps" :key="step">
+        {{step}}
+      </li>
+    
+    </ol>
+    <h2 style="color:red">Important Notes:</h2>
+    <ul>
+      <li v-for="note in this.Notes" :key="note">
+        {{note}}
+      </li>
+    
+    </ul>
+    <h3 class="text-center">
+     Are you ready?
+    </h3>
+    </div>
     <br />
     <div class="text-center">
       <v-btn
@@ -72,6 +79,16 @@ export default {
   components: {},
   data() {
     return {
+      Steps:[
+      "When you press the start button, the first question will appear and the black screen will be activated.",
+      "You should press on the middle of it when it is activated.",
+      "Press the record button when you are ready to start recording.",
+      "Press the stop recording button when you finish or it will be automatically sent after 1 min.",
+      "Press the next button to go to the next question."
+      ],
+      Notes:["Each question you will hear it by our machine and will be written infront of you.",
+      "You will be given 1 min to answer for each question with camera opened.",
+      "Please make your voice clear, loud and in English."],
       firstTime: true,
       nextTime: false,
       bottun: ["Start", "Next"],
@@ -221,10 +238,10 @@ export default {
           .catch((error) => {
             console.error(error);
           });
-    if ( "PersonalityAssessmentResults" in localStorage && "EmotionExtractionResults_user_Q_1" in localStorage && "EmotionExtractionResults_user_Q_2" in localStorage && "EmotionExtractionResults_user_Q_3" in localStorage)
+    /*if ( "PersonalityAssessmentResults" in localStorage && "EmotionExtractionResults_user_Q_1" in localStorage && "EmotionExtractionResults_user_Q_2" in localStorage && "EmotionExtractionResults_user_Q_3" in localStorage)
     {
       this.$router.push("/result");
-    }
+    }*/
   },
 };
 </script>
