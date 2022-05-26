@@ -49,80 +49,63 @@ face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
 
 clf = pickle.load(open(filename, 'rb'))
 classes = ["HAPPY", "CONTEMPT", "ANGER", "DISGUST", "FEAR", "SADNESS", "SURPRISE", "NEUTRAL"]
-def normalize(vector):
-    prevType = vector.dtype
-    if (vector.dtype == np.float16):
-        vector = vector.astype(np.float32)
-    norm = np.linalg.norm(vector)
-    if (norm != 0 and np.isfinite(norm)):
-        vector /= norm
-    return vector.astype(prevType)	
-def calculate_histogram(array,weights):
-	bins_range = (0, 180)
-	bins = 8
-	hist,_ = np.histogram(array,bins=bins,range=bins_range,weights=weights)
-
+def normalize(V):
+    V_Type = V.dtype
+    if (V.dtype == np.float16):
+        V = V.astype(np.float32)
+    V_Norm = np.linalg.norm(V)
+    if (V_Norm != 0 and np.isfinite(V_Norm)):
+        V /= V_Norm
+    return V.astype(V_Type)	
+def calculate_histogram(values,weights):
+	hist,_ = np.histogram(values,bins=8,range=(0, 180),weights=weights)
 	return hist  
 	
-def create_hog_features(grad_array,mag_array):
-	max_h = int(((grad_array.shape[0]-cell[0])/incr[0])+1)
-	max_w = int(((grad_array.shape[1]-cell[1])/incr[1])+1)
-	cell_array = []
-    
+def create_hog_features(gradient_values,magnitude_values):
 	w = 0
 	h = 0
 	i = 0
 	j = 0
-
-	#Creating 8X8 cells
-	while i<max_h:
+	cell_values = []
+	max_height = int(((gradient_values.shape[0]-cell[0])/incr[0])+1)
+	max_width = int(((gradient_values.shape[1]-cell[1])/incr[1])+1)
+	
+	#Calculating 8X8 cells
+	while i<max_height:
 		w = 0
 		j = 0
-
-		while j<max_w:
-			for_hist = grad_array[h:h+cell[0],w:w+cell[1]]
-			for_wght = mag_array[h:h+cell[0],w:w+cell[1]]
-			
-			val = calculate_histogram(for_hist,for_wght)
-			cell_array.append(val)
+		while j<max_width:
+			for_hist = gradient_values[h:h+cell[0],w:w+cell[1]]
+			for_wght = magnitude_values[h:h+cell[0],w:w+cell[1]]
+			cell_values.append(calculate_histogram(for_hist,for_wght))
 			j += 1
 			w += incr[1]
-
 		i += 1
 		h += incr[0]
+	cell_values = np.reshape(cell_values,(max_height, max_width, 8))
 
-	cell_array = np.reshape(cell_array,(max_h, max_w, 8))
-	#normalising blocks of cells
-	block = [2,2]
-	#here increment is 1
-
-	max_h = int((max_h-block[0])+1)
-	max_w = int((max_w-block[1])+1)
-	block_list = []
+	#Normalising the blocks 
 	w = 0
 	h = 0
 	i = 0
 	j = 0
-
-	while i<max_h:
+	block = [2,2]
+	max_height = int((max_height-block[0])+1)
+	max_width = int((max_width-block[1])+1)
+	block_values = []
+	while i<max_height:
 		w = 0
 		j = 0
-
-		while j<max_w:
-			for_norm = cell_array[h:h+block[0],w:w+block[1]]
-			#mag = np.linalg.norm(for_norm)
-			arr_list=normalize(for_norm)
-			#arr_list = (for_norm/mag).flatten().tolist()
-			block_list += arr_list.flatten().tolist()
-			
+		while j<max_width:
+			for_norm = cell_values[h:h+block[0],w:w+block[1]]
+			normlized_values=normalize(for_norm)
+			block_values += normlized_values.flatten().tolist()
 			j += 1
 			w += 1
-
 		i += 1
 		h += 1
 
-	#returns a vextor array list of 288 elements
-	return block_list      
+	return block_values      
 def feature_Extraction(img):
     #Calculating Gradients (direction x and y)
     gX= cv2.Sobel(img,0, dx=1,dy=0, ksize=1)
