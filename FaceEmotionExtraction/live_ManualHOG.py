@@ -41,9 +41,9 @@ cell=[8,8]
 incr=[8,8]
 
 cap = cv2.VideoCapture(0+ cv2.CAP_DSHOW)
-filename = 'AffectNet_5000_svcOnly_rpf_manualFeatExt_model.sav'
+filename = 'C:\\Users\\THINK\\Desktop\\College\\GP\\emotion_extraction\\Emotion-Recognition-From-Facial-Expressions-master\\Trail1\\AffectNet_5000_svcOnly_rpf_manualFeatExt_model.sav'
 
-face_cascade = cv2.CascadeClassifier('C:\\Users\\THINK\\Desktop\\College\\GP\\emotion extraction\\Emotion-Recognition-From-Facial-Expressions-master\\Trail1\\haarcascade_frontalface_default.xml')
+face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
 #face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 
 
@@ -158,57 +158,57 @@ while(True):
     pred_value=int(clf.predict([feat.flatten().tolist()]))
     proba = clf.predict_proba([feat.flatten().tolist()])
     #print(proba)
-    #print(math.floor((proba[0][0]*1000000))/10000)
+    
 
     if(pred_value == 0):
-        cv2.putText(frame, 'Happy: ' + str(math.floor((proba[0][0]*1000000))/10000) + '%', (30, 60),
+        cv2.putText(frame, 'HAPPY: ' + str(round(proba[0][0]*100,2)) + '%', (30, 60),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 0, 0), 2, cv2.LINE_AA)
     else:
-        cv2.putText(frame, 'Happy: ' + str(math.floor((proba[0][0] * 1000000)) / 10000) + '%', (30, 60),
+        cv2.putText(frame, 'HAPPY: ' + str(round(proba[0][0]*100,2)) + '%', (30, 60),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 255), 2, cv2.LINE_AA)
     if(pred_value == 1):
-        cv2.putText(frame, 'Contempt: ' + str(math.floor((proba[0][0]*1000000))/10000) + '%', (30, 100),
+        cv2.putText(frame, 'CONTEMPT: ' + str(round(proba[0][1]*100,2)) + '%', (30, 100),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 0, 0), 2, cv2.LINE_AA)
     else:
-        cv2.putText(frame, 'Contempt: ' + str(math.floor((proba[0][0] * 1000000)) / 10000) + '%', (30, 100),
+        cv2.putText(frame, 'CONTEMPT: ' + str(round(proba[0][1]*100,2)) + '%', (30, 100),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 255), 2, cv2.LINE_AA)
     if (pred_value == 2):
-         cv2.putText(frame, 'ANGER: ' + str(math.floor((proba[0][1]*1000000))/10000), (30, 140),
+         cv2.putText(frame, 'ANGER: ' + str(round(proba[0][2]*100,2)) + '%', (30, 140),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 0, 0), 2, cv2.LINE_AA)
     else:
-        cv2.putText(frame, 'ANGER: ' + str(math.floor((proba[0][1] * 1000000)) / 10000), (30, 140),
+        cv2.putText(frame, 'ANGER: ' + str(round(proba[0][2]*100,2)) + '%', (30, 140),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 255), 2, cv2.LINE_AA)
     if (pred_value == 3):
-        cv2.putText(frame, 'DISGUST: ' + str(math.floor((proba[0][2]*1000000))/10000), (30, 180),
+        cv2.putText(frame, 'DISGUST: ' + str(round(proba[0][3]*100,2)) + '%', (30, 180),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 0, 0), 2, cv2.LINE_AA)
     else:
-        cv2.putText(frame, 'DISGUST: ' + str(math.floor((proba[0][2] * 1000000)) / 10000), (30, 180),
+        cv2.putText(frame, 'DISGUST: ' + str(round(proba[0][3]*100,2)) + '%', (30, 180),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 255), 2, cv2.LINE_AA)
     if(pred_value == 4):
-        cv2.putText(frame, 'FEAR: ' + str(math.floor((proba[0][3]*1000000))/10000), (30, 220),
+        cv2.putText(frame, 'FEAR: ' + str(round(proba[0][4]*100,2)) + '%', (30, 220),
                 cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 0, 0), 2, cv2.LINE_AA)
     else:
-        cv2.putText(frame, 'FEAR: ' + str(math.floor((proba[0][3] * 1000000)) / 10000), (30, 220),
+        cv2.putText(frame, 'FEAR: ' + str(round(proba[0][4]*100,2)) + '%', (30, 220),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 255), 2, cv2.LINE_AA)
 
     if (pred_value == 5):
-        cv2.putText(frame, 'SADNESS: ' + str(math.floor((proba[0][4]*1000000))/10000), (30, 260),
+        cv2.putText(frame, 'SADNESS: ' + str(round(proba[0][5]*100,2)) + '%', (30, 260),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 0, 0), 2, cv2.LINE_AA)
     else:
-        cv2.putText(frame, 'SADNESS: ' + str(math.floor((proba[0][4] * 1000000)) / 10000), (30, 260),
+        cv2.putText(frame, 'SADNESS: ' + str(round(proba[0][5]*100,2)) + '%', (30, 260),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 255), 2, cv2.LINE_AA)
     if(pred_value == 6):
-        cv2.putText(frame, 'SURPRISE: ' + str(math.floor((proba[0][5]*1000000))/10000), (30, 300),
+        cv2.putText(frame, 'SURPRISE: ' + str(round(proba[0][6]*100,2)) + '%', (30, 300),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 0, 0), 2, cv2.LINE_AA)
     else:
-        cv2.putText(frame, 'SURPRISE: ' + str(math.floor((proba[0][5] * 1000000)) / 10000), (30, 300),
+        cv2.putText(frame, 'SURPRISE: ' + str(round(proba[0][6]*100,2)) + '%', (30, 300),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 255), 2, cv2.LINE_AA)
 
     if (pred_value == 7):
-        cv2.putText(frame, 'NEUTRAL: ' + str(math.floor((proba[0][6]*1000000))/10000), (30, 340),
+        cv2.putText(frame, 'NEUTRAL: ' + str(round(proba[0][7]*100,2)) + '%', (30, 340),
                 cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 0, 0), 2, cv2.LINE_AA)
     else:
-        cv2.putText(frame, 'NEUTRAL: ' + str(math.floor((proba[0][6] * 1000000)) / 10000), (30, 340),
+        cv2.putText(frame, 'NEUTRAL: ' + str(round(proba[0][7]*100,2)) + '%', (30, 340),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 255), 2, cv2.LINE_AA)
     cv2.imshow('frame',frame)
     key = cv2.waitKey(1)
