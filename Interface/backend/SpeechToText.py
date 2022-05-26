@@ -56,10 +56,9 @@ def get_large_audio_transcription(path):
                 whole_text += text
     # return the text for all chunks detected
     return whole_text
+    
 #a function that convert mp4 to wav
 def convert_video_to_audio_moviepy(video_file, output_ext="wav"):
-    """Converts video to audio using MoviePy library
-    that uses `ffmpeg` under the hood"""
     filename, ext = os.path.splitext(video_file)
     clip = VideoFileClip(video_file)
     clip.audio.write_audiofile(f"{filename}.{output_ext}")
