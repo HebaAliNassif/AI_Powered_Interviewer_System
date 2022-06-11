@@ -232,6 +232,8 @@ def trainModel(train_x_vectors, train_y_cEXT, train_y_cNEU, train_y_cAGR, train_
     clf_svm_cOPN = svm.SVC(probability=True)
     clf_svm_cOPN.fit(train_x_vectors, train_y_cOPN)
     #print("cOPN score: ", clf_svm_cOPN.score(test_x_vectors, test_y_cOPN))
+    
+    saveModel(clf_svm_cEXT, clf_svm_cNEU, clf_svm_cAGR, clf_svm_cCON, clf_svm_cOPN) 
 
     return clf_svm_cEXT, clf_svm_cNEU, clf_svm_cAGR, clf_svm_cCON, clf_svm_cOPN
 
@@ -252,24 +254,6 @@ def saveModel(clf_svm_cEXT, clf_svm_cNEU, clf_svm_cAGR, clf_svm_cCON, clf_svm_cO
     SVM_cOPN_model = 'models/SVM_cOPN_model.sav'
     pickle.dump(clf_svm_cOPN, open(SVM_cOPN_model, 'wb'))
 
-def loadModel():
-    SVM_cEXT_model = 'models/SVM_cEXT_model.sav'
-    clf_svm_cEXT = pickle.load(open(SVM_cEXT_model, 'rb'))
-
-    SVM_cNEU_model = 'models/SVM_cNEU_model.sav'
-    clf_svm_cNEU = pickle.load(open(SVM_cNEU_model, 'rb'))
-    
-    SVM_cAGR_model = 'models/SVM_cAGR_model.sav'
-    clf_svm_cAGR = pickle.load(open(SVM_cAGR_model, 'rb'))
-
-    SVM_cCON_model = 'models/SVM_cCON_model.sav'
-    clf_svm_cCON = pickle.load(open(SVM_cCON_model, 'rb'))
-
-    SVM_cOPN_model = 'models/SVM_cOPN_model.sav'
-    clf_svm_cOPN = pickle.load(open(SVM_cOPN_model, 'rb'))
-
-    return clf_svm_cEXT, clf_svm_cNEU, clf_svm_cAGR, clf_svm_cCON, clf_svm_cOPN
-    
 
 def loadModel():
     SVM_cEXT_model = '../../PersonalityAssessment/Files/models/SVM_cEXT_model.sav'
@@ -444,9 +428,6 @@ total_vocab = np.load('vectors/total_vocab.npy')
 
 #clf_svm_cEXT, clf_svm_cNEU, clf_svm_cAGR, clf_svm_cCON, clf_svm_cOPN = trainModel(train_x_vectors, essays_y_cEXT, essays_y_cNEU, essays_y_cAGR, essays_y_cCON, essays_y_cOPN)
 
-#saveModel(clf_svm_cEXT, clf_svm_cNEU, clf_svm_cAGR, clf_svm_cCON, clf_svm_cOPN) 
-
-clf_svm_cEXT, clf_svm_cNEU, clf_svm_cAGR, clf_svm_cCON, clf_svm_cOPN = loadModel()
 
 path = "C:/Users/maram/Documents/GitHub/AI_Powered_Interviewer_System/PersonalityAssessment/SpeechRecognitionOutput"
 print(predictPersonality(path))
