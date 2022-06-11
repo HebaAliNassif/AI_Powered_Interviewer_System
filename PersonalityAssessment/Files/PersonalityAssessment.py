@@ -420,27 +420,33 @@ def predictPersonality(path):
 #test_y_cEXT, test_y_cNEU, test_y_cAGR, test_y_cCON, test_y_cOPN = prepareModel(y_test)
 
 
-X_essays, y_essays = loadDataset()
-
-X_essays_dataset = preprocessDataset(X_essays)
-
-X_essays_DF = calculateDF(X_essays_dataset)
-
-total_vocab = [x for x in X_essays_DF]
-np.save('vectors/total_vocab.npy', total_vocab)
 
 
-X_essays_TFIDF = calculateTFIDF(X_essays_dataset, X_essays_DF)
 
-essays_x_vectors = trainingDataVectorization(X_essays_dataset, X_essays_TFIDF, total_vocab)
-np.save('vectors/essays_x_vectors.npy', essays_x_vectors)
-train_x_vectors = np.load('vectors/essays_x_vectors.npy')
+#X_essays, y_essays = loadDataset()
 
-essays_y_cEXT, essays_y_cNEU, essays_y_cAGR, essays_y_cCON, essays_y_cOPN = prepareModel(y_essays)
+#X_essays_dataset = preprocessDataset(X_essays)
 
-clf_svm_cEXT, clf_svm_cNEU, clf_svm_cAGR, clf_svm_cCON, clf_svm_cOPN = trainModel(train_x_vectors, essays_y_cEXT, essays_y_cNEU, essays_y_cAGR, essays_y_cCON, essays_y_cOPN)
+#X_essays_DF = calculateDF(X_essays_dataset)
 
-saveModel(clf_svm_cEXT, clf_svm_cNEU, clf_svm_cAGR, clf_svm_cCON, clf_svm_cOPN) 
+#total_vocab = [x for x in X_essays_DF]
+#np.save('vectors/total_vocab.npy', total_vocab)
+total_vocab = np.load('vectors/total_vocab.npy')
+
+
+#X_essays_TFIDF = calculateTFIDF(X_essays_dataset, X_essays_DF)
+
+#essays_x_vectors = trainingDataVectorization(X_essays_dataset, X_essays_TFIDF, total_vocab)
+#np.save('vectors/essays_x_vectors.npy', essays_x_vectors)
+#train_x_vectors = np.load('vectors/essays_x_vectors.npy')
+
+#essays_y_cEXT, essays_y_cNEU, essays_y_cAGR, essays_y_cCON, essays_y_cOPN = prepareModel(y_essays)
+
+#clf_svm_cEXT, clf_svm_cNEU, clf_svm_cAGR, clf_svm_cCON, clf_svm_cOPN = trainModel(train_x_vectors, essays_y_cEXT, essays_y_cNEU, essays_y_cAGR, essays_y_cCON, essays_y_cOPN)
+
+#saveModel(clf_svm_cEXT, clf_svm_cNEU, clf_svm_cAGR, clf_svm_cCON, clf_svm_cOPN) 
+
+clf_svm_cEXT, clf_svm_cNEU, clf_svm_cAGR, clf_svm_cCON, clf_svm_cOPN = loadModel()
 
 path = "C:/Users/maram/Documents/GitHub/AI_Powered_Interviewer_System/PersonalityAssessment/SpeechRecognitionOutput"
 print(predictPersonality(path))
