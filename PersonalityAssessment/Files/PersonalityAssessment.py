@@ -6,14 +6,16 @@ import nltk
 import num2words 
 import re
 import pickle
-import os
+
 import time
-import string
-import sys
+
+
 from sklearn.model_selection import train_test_split
-from nltk import wordpunct_tokenize, word_tokenize, WordNetLemmatizer, sent_tokenize, pos_tag
+from nltk import word_tokenize, WordNetLemmatizer, sent_tokenize, pos_tag
 from collections import Counter
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
+from sklearn import svm
+
 start= time.time()
 stop_words = ['i', 'me', 'my', 'myself', 'we', 'our', 'ours', 'ourselves', 'you', "you're", "you've", "you'll", "you'd", 'your', 'yours', 'yourself', 'yourselves', 'he', 'him', 'his', 'himself', 'she', "she's", 'her', 'hers', 'herself', 'it', "it's", 'its', 'itself', 'they', 'them', 'their', 'theirs', 'themselves', 'what', 'which', 'who', 'whom', 'this', 'that', "that'll", 'these', 'those', 'am', 'is', 'are', 'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had', 'having', 'do', 'does', 'did', 'doing', 'a', 'an', 'the', 'and', 'but', 'if', 'or', 'because', 'as', 'until', 'while', 'of', 'at', 'by', 'for', 'with', 'about', 'against', 'between', 'into', 'through', 'during', 'before', 'after', 'above', 'below', 'to', 'from', 'up', 'down', 'in', 'out', 'on', 'off', 'over', 'under', 'again', 'further', 'then', 'once', 'here', 'there', 'when', 'where', 'why', 'how', 'all', 'any', 'both', 'each', 'few', 'more', 'most', 'other', 'some', 'such', 'no', 'nor', 'not', 'only', 'own', 'same', 'so', 'than', 'too', 'very', 's', 't', 'can', 'will', 'just', 'don', "don't", 'should', "should've", 'now', 'd', 'll', 'm', 'o', 're', 've', 'y', 'ain', 'aren', "aren't", 'couldn', "couldn't", 'didn', "didn't", 'doesn', "doesn't", 'hadn', "hadn't", 'hasn', "hasn't", 'haven', "haven't", 'isn', "isn't", 'ma', 'mightn', "mightn't", 'mustn', "mustn't", 'needn', "needn't", 'shan', "shan't", 'shouldn', "shouldn't", 'wasn', "wasn't", 'weren', "weren't", 'won', "won't", 'wouldn', "wouldn't"]
 punctuations = ['!', '"', '#', '$', '%', '&', "'", '(', ')', '*', '+', ',', '-', '.', '/', ':', ';', '<', '=', '>', '?', '@', '[', '\\', ']', '^', '_', '`', '{', '|', '}', '~']
@@ -33,11 +35,25 @@ def loadDataset():
     X_essays = data_essays['TEXT']
     y_essays = data_essays[['cEXT', 'cNEU', 'cAGR', 'cCON', 'cOPN']]
 
+    return X_essays, y_essays
+
+def splitDataset(): 
+    # Load from .csv file with complete dataset
+    data_essays = pd.read_csv('dataset/essays.csv', encoding = "ISO-8859-1")
+    data_essays['cEXT'] = np.where(data_essays['cEXT']=='y', 1, 0)
+    data_essays['cNEU'] = np.where(data_essays['cNEU']=='y', 1, 0)
+    data_essays['cAGR'] = np.where(data_essays['cAGR']=='y', 1, 0)
+    data_essays['cCON'] = np.where(data_essays['cCON']=='y', 1, 0)
+    data_essays['cOPN'] = np.where(data_essays['cOPN']=='y', 1, 0)
+
+    X_essays = data_essays['TEXT']
+    y_essays = data_essays[['cEXT', 'cNEU', 'cAGR', 'cCON', 'cOPN']]
+
     #data_essays['text length'] = data_essays['TEXT'].apply(len)
 
-    labels = ['cEXT', 'cNEU', 'cAGR', 'cCON', 'cOPN']
     X_train, X_test, y_train, y_test = train_test_split(X_essays, y_essays, test_size=0.2)
     return X_train, X_test, y_train, y_test
+
 
 
 def clean_text(data):
@@ -181,111 +197,125 @@ def testingDataVectorization(dataset, tf_idf, vocab):
 
     return vectors
 
-def prepareModel(y_train, y_test):
-    train_y_cEXT = y_train.iloc[:, 0]
-    train_y_cNEU = y_train.iloc[:, 1]
-    train_y_cAGR = y_train.iloc[:, 2]
-    train_y_cCON = y_train.iloc[:, 3]
-    train_y_cOPN = y_train.iloc[:, 4]
+def prepareModel(y):
+    y_cEXT = y.iloc[:, 0]
+    y_cNEU = y.iloc[:, 1]
+    y_cAGR = y.iloc[:, 2]
+    y_cCON = y.iloc[:, 3]
+    y_cOPN = y.iloc[:, 4]
 
-    test_y_cEXT = y_test.iloc[:, 0]
-    test_y_cNEU = y_test.iloc[:, 1]
-    test_y_cAGR = y_test.iloc[:, 2]
-    test_y_cCON = y_test.iloc[:, 3]
-    test_y_cOPN = y_test.iloc[:, 4]
-
-    return train_y_cEXT, train_y_cNEU, train_y_cAGR, train_y_cCON, train_y_cOPN, test_y_cEXT, test_y_cNEU, test_y_cAGR, test_y_cCON, test_y_cOPN
-
+    return y_cEXT, y_cNEU, y_cAGR, y_cCON, y_cOPN
 
 def trainModel(train_x_vectors, train_y_cEXT, train_y_cNEU, train_y_cAGR, train_y_cCON, train_y_cOPN):
-    name="RF"
 
-    print("training Extraversion cEXT using Random Forest...")
-    clf_rf_cEXT = RandomForestClassifier(n_estimators=100)
-    clf_rf_cEXT.fit(train_x_vectors, train_y_cEXT)
-    print("cEXT score: ", clf_rf_cEXT.score(test_x_vectors, test_y_cEXT))
+    print("training Extraversion cEXT using SVM...")
+    clf_svm_cEXT = svm.SVC(probability=True)
+    clf_svm_cEXT.fit(train_x_vectors, train_y_cEXT)
+    #print("cEXT score: ", clf_svm_cEXT.score(test_x_vectors, test_y_cEXT))
 
-    print("training Neuroticism cNEU using Random Forest...")
-    clf_rf_cNEU = RandomForestClassifier(n_estimators=100)
-    clf_rf_cNEU.fit(train_x_vectors, train_y_cNEU)
-    print("cNEU score: ", clf_rf_cNEU.score(test_x_vectors, test_y_cNEU))
+    print("training Neuroticism cNEU using SVM...")
+    clf_svm_cNEU = svm.SVC(probability=True)
+    clf_svm_cNEU.fit(train_x_vectors, train_y_cNEU)
+    #print("cNEU score: ", clf_svm_cNEU.score(test_x_vectors, test_y_cNEU))
 
-    print("training Agreeableness cAGR using using Random Forest...")
-    clf_rf_cAGR = RandomForestClassifier(n_estimators=100)
-    clf_rf_cAGR.fit(train_x_vectors, train_y_cAGR)
-    print("cAGR score: ", clf_rf_cAGR.score(test_x_vectors, test_y_cAGR))
+    print("training Agreeableness cAGR using using SVM...")
+    clf_svm_cAGR = svm.SVC(probability=True)
+    clf_svm_cAGR.fit(train_x_vectors, train_y_cAGR)
+    #print("cAGR score: ", clf_svm_cAGR.score(test_x_vectors, test_y_cAGR))
 
-    print("training Conscientiousness cCON using Random Forest...")
-    clf_rf_cCON = RandomForestClassifier(n_estimators=100)
-    clf_rf_cCON.fit(train_x_vectors, train_y_cCON)
-    print("cCON score: ", clf_rf_cCON.score(test_x_vectors, test_y_cCON))
+    print("training Conscientiousness cCON using SVM...")
+    clf_svm_cCON = svm.SVC(probability=True)
+    clf_svm_cCON.fit(train_x_vectors, train_y_cCON)
+    #print("cCON score: ", clf_svm_cCON.score(test_x_vectors, test_y_cCON))
  
-    print("training Openness to Experience cOPN using Random Forest...")
-    clf_rf_cOPN = RandomForestClassifier(n_estimators=100)
-    clf_rf_cOPN.fit(train_x_vectors, train_y_cOPN)
-    print("cOPN score: ", clf_rf_cOPN.score(test_x_vectors, test_y_cOPN))
+    print("training Openness to Experience cOPN using SVM...")
+    clf_svm_cOPN = svm.SVC(probability=True)
+    clf_svm_cOPN.fit(train_x_vectors, train_y_cOPN)
+    #print("cOPN score: ", clf_svm_cOPN.score(test_x_vectors, test_y_cOPN))
 
-    return clf_rf_cEXT, clf_rf_cNEU, clf_rf_cAGR, clf_rf_cCON, clf_rf_cOPN
+    return clf_svm_cEXT, clf_svm_cNEU, clf_svm_cAGR, clf_svm_cCON, clf_svm_cOPN
 
-def saveModel(clf_rf_cEXT, clf_rf_cNEU, clf_rf_cAGR, clf_rf_cCON, clf_rf_cOPN):  
-    RF_cEXT_model = '../../PersonalityAssessment/Files/models/RF_cEXT_model.sav'
-    pickle.dump(clf_rf_cEXT, open(RF_cEXT_model, 'wb'))
 
-    RF_cNEU_model = '../../PersonalityAssessment/Files/models/RF_cNEU_model.sav'
-    pickle.dump(clf_rf_cNEU, open(RF_cNEU_model, 'wb'))
+def saveModel(clf_svm_cEXT, clf_svm_cNEU, clf_svm_cAGR, clf_svm_cCON, clf_svm_cOPN):  
+    SVM_cEXT_model = 'models/SVM_cEXT_model.sav'
+    pickle.dump(clf_svm_cEXT, open(SVM_cEXT_model, 'wb'))
 
-    RF_cAGR_model = '../../PersonalityAssessment/Files/models/RF_cAGR_model.sav'
-    pickle.dump(clf_rf_cAGR, open(RF_cAGR_model, 'wb'))
+    SVM_cNEU_model = 'models/SVM_cNEU_model.sav'
+    pickle.dump(clf_svm_cNEU, open(SVM_cNEU_model, 'wb'))
 
-    RF_cCON_model = '../../PersonalityAssessment/Files/models/RF_cEXT_model.sav'
-    pickle.dump(clf_rf_cCON, open(RF_cCON_model, 'wb'))
+    SVM_cAGR_model = 'models/SVM_cAGR_model.sav'
+    pickle.dump(clf_svm_cAGR, open(SVM_cAGR_model, 'wb'))
 
-    RF_cOPN_model = '../../PersonalityAssessment/Files/models/RF_cOPN_model.sav'
-    pickle.dump(clf_rf_cOPN, open(RF_cOPN_model, 'wb'))
+    SVM_cCON_model = 'models/SVM_cCON_model.sav'
+    pickle.dump(clf_svm_cCON, open(SVM_cCON_model, 'wb'))
+
+    SVM_cOPN_model = 'models/SVM_cOPN_model.sav'
+    pickle.dump(clf_svm_cOPN, open(SVM_cOPN_model, 'wb'))
 
 def loadModel():
-    RF_cEXT_model = '../../PersonalityAssessment/Files/models/RF_cEXT_model.sav'
-    clf_rf_cEXT = pickle.load(open(RF_cEXT_model, 'rb'))
+    SVM_cEXT_model = 'models/SVM_cEXT_model.sav'
+    clf_svm_cEXT = pickle.load(open(SVM_cEXT_model, 'rb'))
 
-    RF_cNEU_model = '../../PersonalityAssessment/Files/models/RF_cNEU_model.sav'
-    clf_rf_cNEU = pickle.load(open(RF_cNEU_model, 'rb'))
+    SVM_cNEU_model = 'models/SVM_cNEU_model.sav'
+    clf_svm_cNEU = pickle.load(open(SVM_cNEU_model, 'rb'))
     
-    RF_cAGR_model = '../../PersonalityAssessment/Files/models/RF_cAGR_model.sav'
-    clf_rf_cAGR = pickle.load(open(RF_cAGR_model, 'rb'))
+    SVM_cAGR_model = 'models/SVM_cAGR_model.sav'
+    clf_svm_cAGR = pickle.load(open(SVM_cAGR_model, 'rb'))
 
-    RF_cCON_model = '../../PersonalityAssessment/Files/models/RF_cEXT_model.sav'
-    clf_rf_cCON = pickle.load(open(RF_cCON_model, 'rb'))
+    SVM_cCON_model = 'models/SVM_cCON_model.sav'
+    clf_svm_cCON = pickle.load(open(SVM_cCON_model, 'rb'))
 
-    RF_cOPN_model = '../../PersonalityAssessment/Files/models/RF_cOPN_model.sav'
-    clf_rf_cOPN = pickle.load(open(RF_cOPN_model, 'rb'))
+    SVM_cOPN_model = 'models/SVM_cOPN_model.sav'
+    clf_svm_cOPN = pickle.load(open(SVM_cOPN_model, 'rb'))
 
-    return clf_rf_cEXT, clf_rf_cNEU, clf_rf_cAGR, clf_rf_cCON, clf_rf_cOPN
+    return clf_svm_cEXT, clf_svm_cNEU, clf_svm_cAGR, clf_svm_cCON, clf_svm_cOPN
     
+
+def loadModel():
+    SVM_cEXT_model = '../../PersonalityAssessment/Files/models/SVM_cEXT_model.sav'
+    clf_svm_cEXT = pickle.load(open(SVM_cEXT_model, 'rb'))
+
+    SVM_cNEU_model = '../../PersonalityAssessment/Files/models/SVM_cNEU_model.sav'
+    clf_svm_cNEU = pickle.load(open(SVM_cNEU_model, 'rb'))
+    
+    SVM_cAGR_model = '../../PersonalityAssessment/Files/models/SVM_cAGR_model.sav'
+    clf_svm_cAGR = pickle.load(open(SVM_cAGR_model, 'rb'))
+
+    SVM_cCON_model = '../../PersonalityAssessment/Files/models/SVM_cEXT_model.sav'
+    clf_svm_cCON = pickle.load(open(SVM_cCON_model, 'rb'))
+
+    SVM_cOPN_model = '../../PersonalityAssessment/Files/models/SVM_cOPN_model.sav'
+    clf_svm_cOPN = pickle.load(open(SVM_cOPN_model, 'rb'))
+
+    return clf_svm_cEXT, clf_svm_cNEU, clf_svm_cAGR, clf_svm_cCON, clf_svm_cOPN
+    
+
 
 def predictModel(Answers_vectors):
-    clf_rf_cEXT, clf_rf_cNEU, clf_rf_cAGR, clf_rf_cCON, clf_rf_cOPN = loadModel()
+    clf_svm_cEXT, clf_svm_cNEU, clf_svm_cAGR, clf_svm_cCON, clf_svm_cOPN = loadModel()
 
-    cEXT = clf_rf_cEXT.predict_proba(Answers_vectors)
+    cEXT = clf_svm_cEXT.predict_proba(Answers_vectors)
     cEXT = np.array(cEXT)
     cEXTAverage = (cEXT.sum(axis = 0)[1]*100)/len(cEXT)
 
-    cNEU = clf_rf_cNEU.predict_proba(Answers_vectors)
+    cNEU = clf_svm_cNEU.predict_proba(Answers_vectors)
     cNEU = np.array(cNEU)
     cNEUAverage = (cNEU.sum(axis = 0)[1]*100)/len(cNEU)
 
-    cAGR = clf_rf_cAGR.predict_proba(Answers_vectors)
+    cAGR = clf_svm_cAGR.predict_proba(Answers_vectors)
     cAGR = np.array(cAGR)
     cAGRAverage = (cAGR.sum(axis = 0)[1]*100)/len(cAGR)
 
-    cCON = clf_rf_cCON.predict_proba(Answers_vectors)
+    cCON = clf_svm_cCON.predict_proba(Answers_vectors)
     cCON = np.array(cCON)
     cCONAverage = (cCON.sum(axis = 0)[1]*100)/len(cCON)
 
-    cOPN = clf_rf_cOPN.predict_proba(Answers_vectors)
+    cOPN = clf_svm_cOPN.predict_proba(Answers_vectors)
     cOPN = np.array(cOPN)
     cOPNAverage = (cOPN.sum(axis = 0)[1]*100)/len(cOPN)
 
     return cEXTAverage, cNEUAverage, cAGRAverage, cCONAverage, cOPNAverage
+
 
 def predictPersonality(path):
     Answers = []
@@ -348,8 +378,8 @@ def predictPersonality(path):
     PersonalityResults['cOPN'] = cOPNAverage
     return PersonalityResults
 
-# Load dataset
-#X_train, X_test, y_train, y_test = loadDataset()
+# Load and split dataset
+#X_train, X_test, y_train, y_test = splitDataset()
 
 # Preprocess training data
 #X_train_dataset = preprocessDataset(X_train)
@@ -364,11 +394,13 @@ def predictPersonality(path):
 #total_vocab = [x for x in X_train_DF]
 #np.save('vectors/total_vocab.npy', total_vocab)
 
+
 # Calculate document frequency for testing data
 #X_test_DF = calculateDF(X_test_dataset)
 
 # Calculate term frequency inverse document frequency for training data
 #X_train_TFIDF = calculateTFIDF(X_train_dataset, X_train_DF)
+
 
 # Calculate term frequency inverse document frequency for testing data
 #X_test_TFIDF = calculateTFIDF(X_test_dataset, X_test_DF)
@@ -378,20 +410,37 @@ def predictPersonality(path):
 #np.save('vectors/train_x_vectors.npy', train_x_vectors)
 #train_x_vectors = np.load('vectors/train_x_vectors.npy')
 
+
 # Vectorize testing data
 #test_x_vectors = testingDataVectorization(X_test_dataset, X_test_TFIDF, total_vocab)
 #np.save('vectors/test_x_vectors.npy', test_x_vectors)
 #test_x_vectors = np.load('vectors/test_x_vectors.npy')
 
-#train_y_cEXT, train_y_cNEU, train_y_cAGR, train_y_cCON, train_y_cOPN, test_y_cEXT, test_y_cNEU, test_y_cAGR, test_y_cCON, test_y_cOPN = prepareModel(y_train, y_test)
+#train_y_cEXT, train_y_cNEU, train_y_cAGR, train_y_cCON, train_y_cOPN = prepareModel(y_train)
+#test_y_cEXT, test_y_cNEU, test_y_cAGR, test_y_cCON, test_y_cOPN = prepareModel(y_test)
 
-#clf_rf_cEXT, clf_rf_cNEU, clf_rf_cAGR, clf_rf_cCON, clf_rf_cOPN = trainModel(train_x_vectors, train_y_cEXT, train_y_cNEU, train_y_cAGR, train_y_cCON, train_y_cOPN)
 
-#saveModel(clf_rf_cEXT, clf_rf_cNEU, clf_rf_cAGR, clf_rf_cCON, clf_rf_cOPN) 
+X_essays, y_essays = loadDataset()
 
-#Answers = ['I started my career in Marketing after graduating with a Business degree in 2013. I’ve spent my entire career at Microsoft, receiving two promotions and three awards for outstanding performance. I’m looking to join a smaller company now, and take on more leadership and project management.', 'From what I read, your company is one of the leaders in database and website security for large corporations. I read your list of clients on your website and saw multiple Fortune 500 companies mentioned, including Verizon and IBM. Beyond that, I recently had an informational interview with James from the Marketing team, after messaging him on LinkedIn, and he shared a bit about your company culture; mainly, the emphasis on collaboration and open interaction between different departments and groups. That’s something that sounds exciting to me and that I’m hoping to find in my next job. Can you share more about how you’d describe the company culture here?', 'I know you’re one of the leaders in contract manufacturing for the pharmaceutical industry. I read two recent news articles as well and saw that you just finalized plans to build a new facility that will double your manufacturing capacity. One of my hopes in my current job search is to find a fast-growing organization that could take full advantage of my past experience in scaling up manufacturing operations, so I was excited to have this interview and learn more about the specific work and challenges you need help with from the person you hire for this role.']
+X_essays_dataset = preprocessDataset(X_essays)
 
-#print(predictPersonality(Answers, total_vocab))
+X_essays_DF = calculateDF(X_essays_dataset)
 
-#path = "C:/Users/maram/Documents/GitHub/AI_Powered_Interviewer_System/PersonalityAssessment/SpeechRecognitionOutput"
-#print(predictPersonality(path))
+total_vocab = [x for x in X_essays_DF]
+np.save('vectors/total_vocab.npy', total_vocab)
+
+
+X_essays_TFIDF = calculateTFIDF(X_essays_dataset, X_essays_DF)
+
+essays_x_vectors = trainingDataVectorization(X_essays_dataset, X_essays_TFIDF, total_vocab)
+np.save('vectors/essays_x_vectors.npy', essays_x_vectors)
+train_x_vectors = np.load('vectors/essays_x_vectors.npy')
+
+essays_y_cEXT, essays_y_cNEU, essays_y_cAGR, essays_y_cCON, essays_y_cOPN = prepareModel(y_essays)
+
+clf_svm_cEXT, clf_svm_cNEU, clf_svm_cAGR, clf_svm_cCON, clf_svm_cOPN = trainModel(train_x_vectors, essays_y_cEXT, essays_y_cNEU, essays_y_cAGR, essays_y_cCON, essays_y_cOPN)
+
+saveModel(clf_svm_cEXT, clf_svm_cNEU, clf_svm_cAGR, clf_svm_cCON, clf_svm_cOPN) 
+
+path = "C:/Users/maram/Documents/GitHub/AI_Powered_Interviewer_System/PersonalityAssessment/SpeechRecognitionOutput"
+print(predictPersonality(path))
