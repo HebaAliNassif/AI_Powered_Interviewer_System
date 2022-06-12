@@ -1,21 +1,24 @@
 <template>
-  <v-app>
+  <v-app >
     <v-app-bar
+      
       app
-      color="blue"
+      color="#5b738c"
       dark
       
     >
+    <v-spacer/>
+      <h1  style="font-size: 40px;font-family:Times New Roman;">Welcome to our Recruitment Process</h1>
       
-        <h1> AI Powered Interviewer System </h1>
-     
       <template v-slot:extension>
-        <v-tabs fixed-tabs align-with-title>
-          <v-tabs-slider color="white"></v-tabs-slider>
-          <v-tab to="/upload_resume">Phase 1</v-tab>
-          <v-tab :disabled="ResumeNotReady" to="/interview">Phase 2</v-tab>
-          <v-tab :disabled="ResultsNotReady" to="/result">Result</v-tab>
+        
+        <v-tabs fixed-tabs >
+          <v-tabs-slider  color="white"></v-tabs-slider>
+          <v-tab style="font-size: 15px;font-family:Times New Roman" to="/upload_resume">Phase 1</v-tab>
+          <v-tab style="font-size: 15px;font-family:Times New Roman" :disabled="ResumeNotReady" to="/interview">Phase 2</v-tab>
+          <v-tab style="font-size: 15px;font-family:Times New Roman" :disabled="ResultsNotReady" to="/result">Result</v-tab>
         </v-tabs>
+        
       </template>
       <v-spacer></v-spacer>
       
@@ -51,3 +54,6 @@ export default {
   },
 };
 </script>
+<style scoped>
+
+</style>

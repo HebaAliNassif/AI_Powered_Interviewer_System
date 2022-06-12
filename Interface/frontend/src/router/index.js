@@ -10,7 +10,8 @@ const routes = [
   {
     path: '/',
     name: 'upload_resume',
-    component: UploadResume
+    component: UploadResume,
+    
   },
   {
     path: '/upload_resume',

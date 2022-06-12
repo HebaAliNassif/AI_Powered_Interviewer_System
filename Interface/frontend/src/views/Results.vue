@@ -1,37 +1,38 @@
 <template>
-  <v-app>
+  <v-app class="back">
     <br />
     <div class="text-center">
     <v-alert
+    style="font-family:Times New Roman;color:#443842"
     v-show="this.waitForResults"
   border="top"
   elevation="9"
   type="info"
->Please wait untill all the results are prepared..try to refresh the page after some time</v-alert>
+>Please wait untill all the results are prepared..Try to refresh the page after some time</v-alert>
     <v-progress-circular a
       v-show="this.waitForResults"
       indeterminate
-      color="primary"
+      color="#443842"
     ></v-progress-circular>
     </div>
     <div align="center">
-      <h2 style="font-family: auto;">Data Extracted From Your Resume</h2>
+      <h2 style="font-family:Times New Roman;color:#443842">Data Extracted From Your Resume</h2>
       <br/>
-      <v-card class="mx-auto" max-width="600"  elevation="5"
+      <v-card style="border:2px solid #5b738c" class="mx-auto" max-width="600"  elevation="5"
   shaped>
   
             <v-list-item color="rgba(0, 0, 0, .4)">
               <v-list-item-content>
-                <v-list-item-title class="title">Email: {{this.Email}}</v-list-item-title>
-                <v-list-item-subtitle>Phone Number: {{this.Phone}}</v-list-item-subtitle>
+                <v-list-item-title class="title" style="font-family:Times New Roman;color:#443842">Email: {{this.Email}}</v-list-item-title>
+                <v-list-item-subtitle style="font-family:Times New Roman;color:#443842">Phone Number: {{this.Phone}}</v-list-item-subtitle>
                 <br/>
       <v-divider></v-divider>
       <br/>
                 <div align="start">
-                  <v-list-item-title class="title">Important Links:</v-list-item-title>
+                  <v-list-item-title style="font-family:Times New Roman;color:#443842" class="title">Important Links:</v-list-item-title>
                   
                 <br/>
-                <ol>
+                <ol style="font-size:18px;font-family:Times New Roman;color:#443842">
                    
                   <li v-for="link in this.Links" :key="link">
                    
@@ -51,29 +52,35 @@
     </div>
     <div style="display: flex;
     flex-direction: row;
-    font-family: auto;
-    align-self: center;">
+    font-family:Times New Roman;
+    align-self: center;
+    ">
     
-    <div style="margin:0px 0px 0px 20px">
-    <h2>Emotion Detected Percentages</h2>
-    <apexchart type="pie" width="380" :options="chartOptions" :series="series"></apexchart>
+    <div style="font-family:Times New Roman;color:#443842">
+    <h2 style="margin:0px 0px 0px 60px">Emotions Detected</h2>
+    <apexchart  type="pie" width="380" :options="chartOptions" :series="series"></apexchart>
     </div>
-    <div >
-    <h2>Personality Assessment Percentages</h2>
+    <div style="font-family:Times New Roman;color:#443842">
+    <h2 style="margin:0px 0px 0px 60px">Personality Assessed</h2>
     <apexchart type="bar" width="380" :options="this.chartOptions2" :series="this.series2"></apexchart>
     </div>
     </div>
     <br/>
       <v-divider></v-divider>
       <br/>
-    <div align="center" style="font-family: auto;">
+    <div align="center" style="font-family:Times New Roman;color:#443842">
       <h2>Resume Qualifications</h2>
       <br/>
       <v-data-table
+      style="border:2px solid #5b738c;max-width:50%"
     :headers="headers"
     :items="Fields"
     :sort-by="['per']"
     :sort-desc="[true, false]"
+    :footer-props="{
+    'items-per-page-options': [5, 10, 15]
+  }"
+    :items-per-page="5"
     class="elevation-5"
   ></v-data-table>
     </div>
@@ -156,6 +163,12 @@ export default {
         },
         dataLabels: {
           enabled: false,
+         
+        },
+        stroke: {
+          show: true,
+          width: 1,
+          colors: ['#fff']
         },
         legend: {
           show: false,
@@ -172,6 +185,7 @@ export default {
           ],
           labels: {
             style: {
+              colors: ['#000000'],
               fontSize: "12px",
             },
           },
@@ -389,5 +403,8 @@ export default {
   /* cursor: pointer; */
   /* line-height: normal; */
   margin: inherit;
+}
+.back{
+  background-color: #d3dbe6;
 }
 </style>

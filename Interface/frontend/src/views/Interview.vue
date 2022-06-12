@@ -1,52 +1,81 @@
 <template>
-  <v-app>
+  <v-app class="back">
     <br />
-    <h1 class="text-center">
-      Congratulation! you have reached the second phase
+    <h1 style="font-family:Times New Roman;color:#443842" class="text-center">
+      Now, we'd like to ask you a few questions...
     </h1>
+    
     <br />
     <div style="margin-left:1rem">
-    <h2>Interview phase steps:</h2>
-    <ol>
+    <h2 style="font-family:Times New Roman;color:#443842">Interview Phase Steps:</h2>
+    <ol style="font-size:20px;font-family:Times New Roman;color:#443842">
       <li v-for="step in this.Steps" :key="step">
         {{step}}
       </li>
     
     </ol>
-    <h2 style="color:red">Important Notes:</h2>
-    <ul>
+    <br/>
+    <h2 style="color:#B22222">Important Notes:</h2>
+    <ul style="font-size:20px;font-family:Times New Roman;color:#443842">
       <li v-for="note in this.Notes" :key="note">
         {{note}}
       </li>
     
     </ul>
-    <h3 class="text-center">
-     Are you ready?
+    <br/>
+    <h3 style="color:#443842" class="text-center">
+     Are you ready to start?
     </h3>
     </div>
     <br />
     <div class="text-center">
       <v-btn
         v-show="this.firstTime"
+        :disabled="skippedVideo"
         depressed
-        color="blue"
-        x-large
+        color="#5b738c" 
+      elevation="5"
+       x-large 
+       dark
         @click="VideoProcessing()"
         >{{ bottun[0] }}</v-btn
       >
       <v-btn
         v-show="this.nextTime"
-        
+        :disabled="skippedVideo"
         depressed
-        color="blue"
-        x-large
+        color="#5b738c" 
+      elevation="5"
+       x-large 
+       dark 
+       
         @click="VideoProcessing()"
         >{{ bottun[1] }}</v-btn
       >
     </div>
+    <br/>
+    <v-alert
+      prominent
+      v-if="skippedVideo"
+      type="error"
+      color="#B22222"
+    >
+      <v-row align="center">
+        <v-col class="grow">
+          You skipped recording your answers. Press on the restart button to start over.
+        </v-col>
+        <v-col class="shrink">
+          <v-btn depressed
+        color="#5b738c" 
+      elevation="5"
+       large
+       dark @click="Repeat()">Restart</v-btn>
+        </v-col>
+      </v-row>
+    </v-alert>
     <br />
     <div class="text-center">
-      <p v-if="this.showQuestion">
+      <p style="font-size:20px;font-family:Times New Roman;color:#443842" v-if="this.showQuestion">
         Question {{ this.$store.state.questionNumber }}:
         {{ questions[this.$store.state.questionNumber - 1] }}
       </p>
@@ -79,29 +108,34 @@ export default {
   components: {},
   data() {
     return {
+      skippedVideo:false,
+      recorded_videos:{},
       Steps:[
-      "When you press the start button, the first question will appear and the black screen will be activated.",
-      "You should press on the middle of it when it is activated.",
+      "When you press the start button, the first question will appear and a black screen will appear.",
+      "You should press on the microphone in the middle of the screen.",
       "Press the record button when you are ready to start recording.",
-      "Press the stop recording button when you finish or it will be automatically sent after 1 min.",
+      "Press the stop recording button when you are done. Otherwise, it will stop recording automatically after 1 minute.",
       "Press the next button to go to the next question."
       ],
-      Notes:["Each question you will hear it by our machine and will be written infront of you.",
-      "You will be given 1 min to answer for each question with camera opened.",
-      "Please make your voice clear, loud and in English."],
+      Notes:["You will hear each question once by our machine and it'll appear in front of you.",
+      "You will be given 1 minute to answer each question with your webcam opened.",
+      "Please make your voice clear, loud and speak in English."],
       firstTime: true,
       nextTime: false,
       bottun: ["Start", "Next"],
       showQuestion: false,
-     
+      numberOfVideosRecorded:0,
       questions: [
-        "Please tell us about yourself in 1 min",
+        "Please tell us about yourself in 1 minute.",
         "Why did you decide to apply to this role?",
         "What do you know about our company?",
       ],
     };
   },
   methods: {
+    Repeat(){
+      location.reload();
+    },
     startcamera() {
       
       let options = {
@@ -137,21 +171,25 @@ export default {
 
         console.log("videojs-record is ready!");
       });
-      let recorded_videos = new Set();
+      
       
       player.on("finishConvert", ()=> {
-        if (player.convertedData.length > 0) {
-          recorded_videos.add(
-            player.convertedData[player.convertedData.length - 1]
-          );
-        } else {
-          recorded_videos.add(player.convertedData);
-        }
-        if (recorded_videos.size == 3) {
-          let index = 0;
+        
+        if (player.convertedData.length > 1 ) {
+          this.recorded_videos[this.$store.state.questionNumber]=player.convertedData[player.convertedData.length - 1];
           
-          recorded_videos.forEach(async (video) => {
-            index = index + 1;
+        } else {
+          this.recorded_videos[this.$store.state.questionNumber]=player.convertedData;
+          
+        }
+        console.log(this.recorded_videos)
+        this.numberOfVideosRecorded=Object.keys(this.recorded_videos).length
+        console.log(this.numberOfVideosRecorded)
+        if (Object.keys(this.recorded_videos).length == 3) {
+          
+          Object.entries(this.recorded_videos).forEach(([index, video]) => {
+  
+            
             
             
             let formData = new FormData();
@@ -191,9 +229,17 @@ export default {
 
         player.record().reset();
       });
+      
     },
     VideoProcessing() {
-      if (this.$store.state.questionNumber > 2) {
+      
+      console.log(this.$store.state.questionNumber)
+      console.log(this.numberOfVideosRecorded)
+      if(this.numberOfVideosRecorded!=this.$store.state.questionNumber){
+        this.skippedVideo=true
+      }
+      
+      else if (this.$store.state.questionNumber > 2 ) {
         const path = "http://localhost:5000/personality_assessment";
             axios
               .get(path, {
@@ -238,10 +284,10 @@ export default {
           .catch((error) => {
             console.error(error);
           });
-    if ( "PersonalityAssessmentResults" in localStorage && "EmotionExtractionResults_user_Q_1" in localStorage && "EmotionExtractionResults_user_Q_2" in localStorage && "EmotionExtractionResults_user_Q_3" in localStorage)
+    /*if ( "PersonalityAssessmentResults" in localStorage && "EmotionExtractionResults_user_Q_1" in localStorage && "EmotionExtractionResults_user_Q_2" in localStorage && "EmotionExtractionResults_user_Q_3" in localStorage)
     {
       this.$router.push("/result");
-    }
+    }*/
   },
 };
 </script>
@@ -261,5 +307,8 @@ video {
     width:80% !important;
     height: auto !important;
     
+}
+.back{
+  background-color: #d3dbe6;
 }
 </style>
