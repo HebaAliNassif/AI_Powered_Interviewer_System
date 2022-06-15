@@ -1,10 +1,13 @@
 <template>
-  <v-app>
+  <v-app >
+    
+    <div class="back">
     <br />
-    <h1 class="text-center">Welcome to our Recruitment Process</h1>
-    <v-img src="../assets/robot.jpg"> </v-img>
+    <div align="center">
+    <v-img  src="../assets/GPLogo2.png" width="80%" height="auto"> </v-img>
+    </div>
     <br />
-    <p class="text-center">Please upload your resume/cv</p>
+    <h2 style="font-family:Times New Roman;color:#443842" class="text-center">Please upload your Resume/CV</h2>
 
     <br />
     <div align="center">
@@ -14,7 +17,7 @@
         outlined
         :rules="rules"
         accept=".pdf"
-        color="blue"
+        color="#5b738c" 
         elevation="5"
         label="Upload resume..."
         prepend-icon="mdi-cloud-upload"
@@ -26,11 +29,17 @@
     <br />
 
     <div class="text-center">
-      <v-btn color="green" elevation="5" x-large plain @click="SubmitResume()"
+      <v-btn 
+      color="#5b738c" 
+      elevation="5"
+       x-large 
+       dark 
+       @click="SubmitResume()"
         >submit</v-btn
       >
     </div>
     <br />
+    </div>
   </v-app>
 </template>
 <script>
@@ -87,10 +96,15 @@ export default {
           .catch((error) => {
             console.error(error);
           });
-    if ( "Resume_user" in localStorage )
+    /*if ( "Resume_user" in localStorage )
     {
       this.$router.push("/result");
-    }
+    }*/
   },
 };
 </script>
+<style scoped>
+.back{
+  background-color: #d3dbe6;
+}
+</style>
