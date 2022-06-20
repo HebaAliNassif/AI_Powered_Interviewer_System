@@ -391,8 +391,8 @@ export default {
     } else {
       this.waitForResults = true;
     }
-    /*
-      if (Question1_data!== "undefined" && Question2_data!== "undefined" && Question3_data!== "undefined"){
+    
+      /*if (Question1_data!== "undefined" && Question2_data!== "undefined" && Question3_data!== "undefined"){
         
       }*/
   },

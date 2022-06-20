@@ -415,7 +415,7 @@ def predictPersonality(path):
 
 #total_vocab = [x for x in X_essays_DF]
 #np.save('vectors/total_vocab.npy', total_vocab)
-total_vocab = np.load('vectors/total_vocab.npy')
+#total_vocab = np.load('../../PersonalityAssessment/Files/vectors/total_vocab.npy')
 
 
 #X_essays_TFIDF = calculateTFIDF(X_essays_dataset, X_essays_DF)
@@ -429,5 +429,5 @@ total_vocab = np.load('vectors/total_vocab.npy')
 #clf_svm_cEXT, clf_svm_cNEU, clf_svm_cAGR, clf_svm_cCON, clf_svm_cOPN = trainModel(train_x_vectors, essays_y_cEXT, essays_y_cNEU, essays_y_cAGR, essays_y_cCON, essays_y_cOPN)
 
 
-path = "C:/Users/maram/Documents/GitHub/AI_Powered_Interviewer_System/PersonalityAssessment/SpeechRecognitionOutput"
-print(predictPersonality(path))
+#path = "C:/Users/maram/Documents/GitHub/AI_Powered_Interviewer_System/PersonalityAssessment/SpeechRecognitionOutput"
+#print(predictPersonality(path))
