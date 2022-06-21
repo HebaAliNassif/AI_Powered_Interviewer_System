@@ -2,7 +2,7 @@
   <v-app class="back">
     <br />
     <h1 style="font-family:Times New Roman;color:#443842" class="text-center">
-      Now, we'd like to ask you a few questions...
+      Now, we would like to ask you a few questions...
     </h1>
     
     <br />
@@ -81,8 +81,8 @@
       </p>
     </div>
 
-    <div>
-      <video id="myVideo" playsinline class="video-js vjs-default-skin"></video>
+    <div >
+      <video id="myVideo"  playsinline class="video-js vjs-default-skin " ></video>
     </div>
     <br />
     <br />
@@ -284,10 +284,10 @@ export default {
           .catch((error) => {
             console.error(error);
           });
-    /*if ( "PersonalityAssessmentResults" in localStorage && "EmotionExtractionResults_user_Q_1" in localStorage && "EmotionExtractionResults_user_Q_2" in localStorage && "EmotionExtractionResults_user_Q_3" in localStorage)
+    if ( "PersonalityAssessmentResults" in localStorage && "EmotionExtractionResults_user_Q_1" in localStorage && "EmotionExtractionResults_user_Q_2" in localStorage && "EmotionExtractionResults_user_Q_3" in localStorage)
     {
       this.$router.push("/result");
-    }*/
+    }
   },
 };
 </script>
@@ -304,8 +304,9 @@ video {
     margin-right: auto;
     display: block;
     position: relative !important;
-    width:80% !important;
+    width:70% !important;
     height: auto !important;
+    font-size: 15px;
     
 }
 .back{

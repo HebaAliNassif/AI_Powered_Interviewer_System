@@ -96,10 +96,10 @@ export default {
           .catch((error) => {
             console.error(error);
           });
-    /*if ( "Resume_user" in localStorage )
+    if ( "Resume_user" in localStorage )
     {
       this.$router.push("/result");
-    }*/
+    }
   },
 };
 </script>
